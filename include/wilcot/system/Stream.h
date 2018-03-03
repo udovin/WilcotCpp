@@ -12,10 +12,15 @@ namespace wilcot { namespace system {
 /*!
  * Stream interface
  */
-class Stream : stream::Stream
+class Stream : public stream::Stream
 {
 public:
-	virtual int getHandle() = 0;
+	/*!
+	 * Get system handle
+	 *
+	 * \return
+	 */
+	virtual int getHandle() const = 0;
 };
 
 }}

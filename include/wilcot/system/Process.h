@@ -8,6 +8,7 @@
 #include <wilcot/Object.h>
 
 #include <wilcot/system/Path.h>
+#include <wilcot/system/Stream.h>
 
 #include <vector>
 
@@ -72,6 +73,27 @@ public:
 	void setWorkingDirectory(const Path& workingDirectory);
 
 	/*!
+	 * Set standard input
+	 *
+	 * \param inputStream
+	 */
+	void setStandardInput(Stream& inputStream);
+
+	/*!
+	 * Set standard output
+	 *
+	 * \param outputStream
+	 */
+	void setStandardOutput(Stream& outputStream);
+
+	/*!
+	 * Set standard error
+	 *
+	 * \param outputStream
+	 */
+	void setStandardError(Stream& outputStream);
+
+	/*!
 	 * Get exit code
 	 *
 	 * \return
@@ -101,6 +123,12 @@ private:
 	std::vector<std::string> arguments_;
 
 	Path workingDirectory_;
+
+	int standardInputHandle_;
+
+	int standardOutputHandle_;
+
+	int standardErrorHandle_;
 
 	int exitCode_;
 

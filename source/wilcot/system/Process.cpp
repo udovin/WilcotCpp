@@ -14,7 +14,11 @@ namespace wilcot { namespace system {
 
 Process::Process()
 	: handle_(-1), program_(), arguments_()
-	, workingDirectory_("."), exitCode_(0)
+	, workingDirectory_(".")
+	, standardInputHandle_(STDIN_FILENO)
+	, standardOutputHandle_(STDOUT_FILENO)
+	, standardErrorHandle_(STDERR_FILENO)
+	, exitCode_(0)
 {}
 
 Process::~Process()
@@ -50,6 +54,21 @@ const Path& Process::getWorkingDirectory() const
 void Process::setWorkingDirectory(const Path& workingDirectory)
 {
 	workingDirectory_ = workingDirectory;
+}
+
+void Process::setStandardInput(Stream &inputStream)
+{
+	standardInputHandle_ = inputStream.getHandle();
+}
+
+void Process::setStandardOutput(Stream &outputStream)
+{
+	standardOutputHandle_ = outputStream.getHandle();
+}
+
+void Process::setStandardError(Stream &outputStream)
+{
+	standardErrorHandle_ = outputStream.getHandle();
 }
 
 int Process::getExitCode() const
@@ -107,6 +126,10 @@ int Process::entryPoint_(void* process)
 int Process::entryPoint_()
 {
 #ifdef WILCOT_SYSTEM_LINUX
+	dup2(standardInputHandle_, STDIN_FILENO);
+	dup2(standardOutputHandle_, STDOUT_FILENO);
+	dup2(standardErrorHandle_, STDERR_FILENO);
+
 	if (chdir(workingDirectory_) != 0)
 	{
 		return EXIT_FAILURE;
