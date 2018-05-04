@@ -1,3 +1,8 @@
+/*!
+ * \author Ivan Udovin
+ * \license http://www.spdx.org/licenses/MIT
+ */
+
 #include <wilcot/system/Path.h>
 
 namespace wilcot { namespace system {

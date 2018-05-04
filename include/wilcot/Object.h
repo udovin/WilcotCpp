@@ -1,9 +1,10 @@
-#ifndef HEADER_wilcot_Object
-#define HEADER_wilcot_Object
-
 /*!
  * \author Ivan Udovin
+ * \license http://www.spdx.org/licenses/MIT
  */
+
+#ifndef HEADER_wilcot_Object
+#define HEADER_wilcot_Object
 
 namespace wilcot {
 

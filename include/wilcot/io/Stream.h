@@ -1,13 +1,14 @@
-#ifndef HEADER_wilcot_stream_Stream
-#define HEADER_wilcot_stream_Stream
-
 /*!
  * \author Ivan Udovin
+ * \license http://www.spdx.org/licenses/MIT
  */
+
+#ifndef HEADER_wilcot_io_Stream
+#define HEADER_wilcot_io_Stream
 
 #include <cstddef>
 
-namespace wilcot { namespace stream {
+namespace wilcot { namespace io {
 
 /*!
  * Stream interface
@@ -41,4 +42,4 @@ public:
 
 }}
 
-#endif // HEADER_wilcot_stream_Stream
+#endif // HEADER_wilcot_io_Stream

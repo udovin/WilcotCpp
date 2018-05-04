@@ -1,3 +1,8 @@
+/*!
+ * \author Ivan Udovin
+ * \license http://www.spdx.org/licenses/MIT
+ */
+
 #ifndef HEADER_wilcot_system_detect
 #define HEADER_wilcot_system_detect
 

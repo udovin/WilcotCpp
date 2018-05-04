@@ -1,12 +1,18 @@
+/*!
+ * \author Ivan Udovin
+ * \license http://www.spdx.org/licenses/MIT
+ */
+
 #include <wilcot/system/Process.h>
 
 #ifdef WILCOT_SYSTEM_LINUX
 #	include <wait.h>
 #	include <unistd.h>
 #	include <signal.h>
-#	include <stdexcept>
-#	include <cstdlib>
 #endif
+
+#include <stdexcept>
+#include <cstdlib>
 
 #define STACK_SIZE__ 1048576
 
@@ -56,19 +62,19 @@ void Process::setWorkingDirectory(const Path& workingDirectory)
 	workingDirectory_ = workingDirectory;
 }
 
-void Process::setStandardInput(Stream &inputStream)
+void Process::setStandardInput(FileHandle& inputHandle)
 {
-	standardInputHandle_ = inputStream.getHandle();
+	standardInputHandle_ = inputHandle.getHandle();
 }
 
-void Process::setStandardOutput(Stream &outputStream)
+void Process::setStandardOutput(FileHandle& outputHandle)
 {
-	standardOutputHandle_ = outputStream.getHandle();
+	standardOutputHandle_ = outputHandle.getHandle();
 }
 
-void Process::setStandardError(Stream &outputStream)
+void Process::setStandardError(FileHandle& outputHandle)
 {
-	standardErrorHandle_ = outputStream.getHandle();
+	standardErrorHandle_ = outputHandle.getHandle();
 }
 
 int Process::getExitCode() const

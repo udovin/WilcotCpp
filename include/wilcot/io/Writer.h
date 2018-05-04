@@ -1,15 +1,16 @@
-#ifndef HEADER_wilcot_stream_Writer
-#define HEADER_wilcot_stream_Writer
-
 /*!
  * \author Ivan Udovin
+ * \license http://www.spdx.org/licenses/MIT
  */
+
+#ifndef HEADER_wilcot_io_Writer
+#define HEADER_wilcot_io_Writer
 
 #include <wilcot/Object.h>
 
-#include <wilcot/stream/Stream.h>
+#include <wilcot/io/Stream.h>
 
-namespace wilcot { namespace stream {
+namespace wilcot { namespace io {
 
 /*!
  * Writer class
@@ -28,4 +29,4 @@ private:
 
 }}
 
-#endif // HEADER_wilcot_stream_Writer
+#endif // HEADER_wilcot_io_Writer

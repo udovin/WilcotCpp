@@ -1,11 +1,16 @@
-#include <wilcot/system/FileStream.h>
+/*!
+ * \author Ivan Udovin
+ * \license http://www.spdx.org/licenses/MIT
+ */
+
+#include <wilcot/io/FileStream.h>
 
 #include <unistd.h>
 #include <fcntl.h>
 
-namespace wilcot { namespace system {
+namespace wilcot { namespace io {
 
-FileStream::FileStream(const Path& path, Mode mode)
+FileStream::FileStream(const system::Path& path, Mode mode)
 	: handle_(-1)
 {
 	switch (mode)

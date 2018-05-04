@@ -1,9 +1,10 @@
-#ifndef HEADER_wilcot_system_Path
-#define HEADER_wilcot_system_Path
-
 /*!
  * \author Ivan Udovin
+ * \license http://www.spdx.org/licenses/MIT
  */
+
+#ifndef HEADER_wilcot_system_Path
+#define HEADER_wilcot_system_Path
 
 #include <wilcot/Object.h>
 

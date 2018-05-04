@@ -1,14 +1,16 @@
+/*!
+ * \author Ivan Udovin
+ * \license http://www.spdx.org/licenses/MIT
+ */
+
 #ifndef HEADER_wilcot_system_Process
 #define HEADER_wilcot_system_Process
 
-/*!
- * \author Ivan Udovin
- */
-
 #include <wilcot/Object.h>
 
+#include <wilcot/system/detect.h>
 #include <wilcot/system/Path.h>
-#include <wilcot/system/Stream.h>
+#include <wilcot/system/FileHandle.h>
 
 #include <vector>
 
@@ -75,23 +77,23 @@ public:
 	/*!
 	 * Set standard input
 	 *
-	 * \param inputStream
+	 * \param inputHandle
 	 */
-	void setStandardInput(Stream& inputStream);
+	void setStandardInput(FileHandle& inputHandle);
 
 	/*!
 	 * Set standard output
 	 *
-	 * \param outputStream
+	 * \param outputHandle
 	 */
-	void setStandardOutput(Stream& outputStream);
+	void setStandardOutput(FileHandle& outputHandle);
 
 	/*!
 	 * Set standard error
 	 *
-	 * \param outputStream
+	 * \param outputHandle
 	 */
-	void setStandardError(Stream& outputStream);
+	void setStandardError(FileHandle& outputHandle);
 
 	/*!
 	 * Get exit code
