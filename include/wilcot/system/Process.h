@@ -1,6 +1,6 @@
-/*!
- * \author Ivan Udovin
- * \license http://www.spdx.org/licenses/MIT
+/**
+ * @author Ivan Udovin
+ * @license MIT
  */
 
 #ifndef HEADER_wilcot_system_Process
@@ -16,104 +16,104 @@
 
 namespace wilcot { namespace system {
 
-/*!
- * Process class
+/**
+ * Class Process.
  */
 class Process : public Object
 {
 public:
-	/*!
-	 * A constructor
+	/**
+	 * Process constructor.
 	 */
 	Process();
 
-	/*!
-	 * A destructor
+	/**
+	 * Process destructor.
 	 */
 	~Process();
 
-	/*!
-	 * Get path to executable
+	/**
+	 * Get path to executable.
 	 *
-	 * \return
+	 * @return
 	 */
 	const Path& getProgram() const;
 
-	/*!
-	 * Set path to executable
+	/**
+	 * Set path to executable.
 	 *
-	 * \param program
+	 * @param program
 	 */
 	void setProgram(const Path& program);
 
-	/*!
-	 * Get execution arguments
+	/**
+	 * Get execution arguments.
 	 *
-	 * \return
+	 * @return
 	 */
 	const std::vector<std::string>& getArguments() const;
 
-	/*!
-	 * Set execution arguments
+	/**
+	 * Set execution arguments.
 	 *
-	 * \param arguments
+	 * @param arguments
 	 */
 	void setArguments(const std::vector<std::string>& arguments);
 
-	/*!
-	 * Get working directory
+	/**
+	 * Get working directory.
 	 *
-	 * \return
+	 * @return
 	 */
 	const Path& getWorkingDirectory() const;
 
-	/*!
-	 * Set working directory
+	/**
+	 * Set working directory.
 	 *
-	 * \param workingDirectory
+	 * @param workingDirectory
 	 */
 	void setWorkingDirectory(const Path& workingDirectory);
 
-	/*!
-	 * Set standard input
+	/**
+	 * Set standard input.
 	 *
-	 * \param inputHandle
+	 * @param inputHandle
 	 */
 	void setStandardInput(FileHandle& inputHandle);
 
-	/*!
-	 * Set standard output
+	/**
+	 * Set standard output.
 	 *
-	 * \param outputHandle
+	 * @param outputHandle
 	 */
 	void setStandardOutput(FileHandle& outputHandle);
 
-	/*!
-	 * Set standard error
+	/**
+	 * Set standard error.
 	 *
-	 * \param outputHandle
+	 * @param outputHandle
 	 */
 	void setStandardError(FileHandle& outputHandle);
 
-	/*!
-	 * Get exit code
+	/**
+	 * Get exit code.
 	 *
-	 * \return
+	 * @return
 	 */
 	int getExitCode() const;
 
-	/*!
-	 * Start process
+	/**
+	 * Start process.
 	 */
 	void start();
 
-	/*!
-	 * Stop process
+	/**
+	 * Stop process.
 	 */
 	void stop();
 
-	/*!
-	 * Wait process for finished
+	/**
+	 * Wait process for finished.
 	 */
 	void wait();
 
@@ -134,18 +134,18 @@ private:
 
 	int exitCode_;
 
-	/*!
-	 * An entry point for child process
+	/**
+	 * An entry point for child process.
 	 *
-	 * \param process
-	 * \return
+	 * @param process
+	 * @return
 	 */
 	static int entryPoint_(void* process);
 
-	/*!
-	 * An entry point for child process
+	/**
+	 * An entry point for child process.
 	 *
-	 * \return
+	 * @return
 	 */
 	int entryPoint_();
 };

@@ -1,6 +1,6 @@
-/*!
- * \author Ivan Udovin
- * \license http://www.spdx.org/licenses/MIT
+/**
+ * @author Ivan Udovin
+ * @license MIT
  */
 
 #ifndef HEADER_wilcot_io_Writer
@@ -12,14 +12,14 @@
 
 namespace wilcot { namespace io {
 
-/*!
- * Writer class
+/**
+ * Class Writer.
  */
 class Writer : public Object
 {
 public:
-	/*!
-	 * A constructor
+	/**
+	 * Writer constructor.
 	 */
 	Writer(Stream& stream);
 

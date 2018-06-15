@@ -1,6 +1,6 @@
-/*!
- * \author Ivan Udovin
- * \license http://www.spdx.org/licenses/MIT
+/**
+ * @author Ivan Udovin
+ * @license MIT
  */
 
 #ifndef HEADER_wilcot_system_Path
@@ -14,133 +14,122 @@
 
 namespace wilcot { namespace system {
 
-/*!
- * Path class
+/**
+ * Class Path.
  */
 class Path : public Object
 {
 public:
-	/*!
-	 * A constructor
+	/**
+	 * Path constructor.
 	 */
 	Path();
 
-	/*!
-	 * A copy constructor
+	/**
+	 * Path copy constructor.
 	 *
-	 * \param other
+	 * @param other
 	 */
 	Path(const Path& other);
 
-	/*!
-	 *
-	 * \param other
-	 * \return
+	/**
+	 * @param other
+	 * @return
 	 */
 	Path& operator=(const Path& other);
 
-	/*!
-	 * A constructor
+	/**
+	 * A constructor.
 	 *
-	 * \param path
+	 * @param path
 	 */
 	Path(const char* path);
 
-	/*!
-	 * A constructor
+	/**
+	 * A constructor.
 	 *
-	 * \param path
+	 * @param path
 	 */
 	Path(const std::string& path);
 
-	/*!
-	 * Get raw path string
+	/**
+	 * Get raw path string.
 	 *
-	 * \return
+	 * @return
 	 */
 	operator const char*() const;
 
-	/*!
-	 * Check that path is absolute
+	/**
+	 * Check that path is absolute.
 	 *
-	 * \return
+	 * @return
 	 */
 	bool isAbsolute() const;
 
-	/*!
-	 * Get absolute path
+	/**
+	 * Get absolute path.
 	 *
-	 * \return
+	 * @return
 	 */
 	Path getAbsolute() const;
 
-	/*!
-	 *
-	 * \param other
-	 * \return
+	/**
+	 * @param other
+	 * @return
 	 */
 	Path& operator+=(const Path& other);
 
-	/*!
-	 *
-	 * \param other
-	 * \return
+	/**
+	 * @param other
+	 * @return
 	 */
 	Path& operator/=(const Path& other);
 
-	/*!
-	 *
-	 * \param other
-	 * \return
+	/**
+	 * @param other
+	 * @return
 	 */
 	Path operator+(const Path& other) const;
 
-	/*!
-	 *
-	 * \param other
-	 * \return
+	/**
+	 * @param other
+	 * @return
 	 */
 	Path operator/(const Path& other) const;
 
-	/*!
-	 *
-	 * \param other
-	 * \return
+	/**
+	 * @param other
+	 * @return
 	 */
 	bool operator==(const Path& other) const;
 
-	/*!
-	 *
-	 * \param other
-	 * \return
+	/**
+	 * @param other
+	 * @return
 	 */
 	bool operator!=(const Path& other) const;
 
-	/*!
-	 *
-	 * \param other
-	 * \return
+	/**
+	 * @param other
+	 * @return
 	 */
 	bool operator<(const Path& other) const;
 
-	/*!
-	 *
-	 * \param other
-	 * \return
+	/**
+	 * @param other
+	 * @return
 	 */
 	bool operator<=(const Path& other) const;
 
-	/*!
-	 *
-	 * \param other
-	 * \return
+	/**
+	 * @param other
+	 * @return
 	 */
 	bool operator>(const Path& other) const;
 
-	/*!
-	 *
-	 * \param other
-	 * \return
+	/**
+	 * @param other
+	 * @return
 	 */
 	bool operator>=(const Path& other) const;
 

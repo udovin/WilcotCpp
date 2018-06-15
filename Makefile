@@ -23,7 +23,7 @@ BINARY_TESTS := $(patsubst %.cpp, %, $(SOURCE_TESTS))
 
 # All targets
 
-all: build
+all: build tests
 
 build: $(LIBRARY_FILE)
 

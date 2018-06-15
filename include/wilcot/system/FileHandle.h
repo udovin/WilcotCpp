@@ -1,6 +1,6 @@
-/*!
- * \author Ivan Udovin
- * \license http://www.spdx.org/licenses/MIT
+/**
+ * @author Ivan Udovin
+ * @license MIT
  */
 
 #ifndef HEADER_wilcot_system_FileHandle
@@ -10,18 +10,32 @@
 
 namespace wilcot { namespace system {
 
-/*!
- * FileHandle interface
+/**
+ * Interface FileHandle.
  */
 class FileHandle
 {
 public:
-	/*!
-	 * Get system handle
-	 *
-	 * \return
+	/**
+	 * Type of system handle.
 	 */
-	virtual int getHandle() const = 0;
+#ifdef WILCOT_SYSTEM_WINDOWS
+	typedef HANDLE Handle;
+#else
+	typedef int Handle;
+#endif
+
+	/**
+	 * Invalid system handle value.
+	 */
+	static const Handle INVALID_VALUE;
+
+	/**
+	 * Get system handle.
+	 *
+	 * @return
+	 */
+	virtual Handle getHandle() const = 0;
 };
 
 }}

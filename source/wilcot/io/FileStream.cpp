@@ -1,6 +1,6 @@
-/*!
- * \author Ivan Udovin
- * \license http://www.spdx.org/licenses/MIT
+/**
+ * @author Ivan Udovin
+ * @license MIT
  */
 
 #include <wilcot/io/FileStream.h>
@@ -11,7 +11,7 @@
 namespace wilcot { namespace io {
 
 FileStream::FileStream(const system::Path& path, Mode mode)
-	: handle_(-1)
+	: handle_(system::FileHandle::INVALID_VALUE)
 {
 	switch (mode)
 	{
@@ -44,7 +44,7 @@ void FileStream::close()
 	::close(handle_);
 }
 
-int FileStream::getHandle() const
+system::FileHandle::Handle FileStream::getHandle() const
 {
 	return handle_;
 }

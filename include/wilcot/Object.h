@@ -1,6 +1,6 @@
-/*!
- * \author Ivan Udovin
- * \license http://www.spdx.org/licenses/MIT
+/**
+ * @author Ivan Udovin
+ * @license MIT
  */
 
 #ifndef HEADER_wilcot_Object
@@ -8,14 +8,14 @@
 
 namespace wilcot {
 
-/*!
- * Object class
+/**
+ * Object class.
  */
 class Object
 {
 public:
-	/*!
-	 * A destructor
+	/**
+	 * A destructor.
 	 */
 	virtual ~Object();
 };

@@ -1,6 +1,6 @@
-/*!
- * \author Ivan Udovin
- * \license http://www.spdx.org/licenses/MIT
+/**
+ * @author Ivan Udovin
+ * @license MIT
  */
 
 #ifndef HEADER_wilcot_io_FileStream
@@ -14,8 +14,8 @@
 
 namespace wilcot { namespace io {
 
-/*!
- * FileStream class
+/**
+ * Class FileStream.
  */
 class FileStream
 	: public Object, public Stream, public system::FileHandle
@@ -27,51 +27,51 @@ public:
 		WRITE = 1
 	};
 
-	/*!
-	 * A constructor
+	/**
+	 * FileStream constructor.
 	 *
-	 * \param path
-	 * \param mode
+	 * @param path
+	 * @param mode
 	 */
 	FileStream(const system::Path& path, Mode mode);
 
-	/*!
-	 * A destructor
+	/**
+	 * FileStream destructor.
 	 */
 	~FileStream();
 
-	/*!
-	 * Read bytes from stream
+	/**
+	 * Read bytes from stream.
 	 *
-	 * \param buffer
-	 * \param count
-	 * \return
+	 * @param buffer
+	 * @param count
+	 * @return
 	 */
 	std::size_t read(void* buffer, std::size_t count);
 
-	/*!
-	 * Write bytes to stream
+	/**
+	 * Write bytes to stream.
 	 *
-	 * \param buffer
-	 * \param size
-	 * \return
+	 * @param buffer
+	 * @param size
+	 * @return
 	 */
 	std::size_t write(const void* buffer, std::size_t count);
 
-	/*!
-	 * Close stream
+	/**
+	 * Close stream.
 	 */
 	void close();
 
-	/*!
-	 * Get system handle
+	/**
+	 * Get system handle.
 	 *
-	 * \return
+	 * @return
 	 */
-	int getHandle() const;
+	system::FileHandle::Handle getHandle() const;
 
 private:
-	int handle_;
+	system::FileHandle::Handle handle_;
 };
 
 }}

@@ -1,6 +1,6 @@
-/*!
- * \author Ivan Udovin
- * \license http://www.spdx.org/licenses/MIT
+/**
+ * @author Ivan Udovin
+ * @license MIT
  */
 
 #ifndef HEADER_wilcot_io_Stream
@@ -10,32 +10,32 @@
 
 namespace wilcot { namespace io {
 
-/*!
- * Stream interface
+/**
+ * Interface Stream.
  */
 class Stream
 {
 public:
-	/*!
-	 * Read bytes from stream
+	/**
+	 * Read bytes from stream.
 	 *
-	 * \param buffer
-	 * \param count
-	 * \return
+	 * @param buffer
+	 * @param count
+	 * @return
 	 */
 	virtual std::size_t read(void* buffer, std::size_t count) = 0;
 
-	/*!
-	 * Write bytes to stream
+	/**
+	 * Write bytes to stream.
 	 *
-	 * \param buffer
-	 * \param size
-	 * \return
+	 * @param buffer
+	 * @param size
+	 * @return
 	 */
 	virtual std::size_t write(const void* buffer, std::size_t count) = 0;
 
-	/*!
-	 * Close stream
+	/**
+	 * Close stream.
 	 */
 	virtual void close() = 0;
 };

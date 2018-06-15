@@ -1,6 +1,6 @@
-/*!
- * \author Ivan Udovin
- * \license http://www.spdx.org/licenses/MIT
+/**
+ * @author Ivan Udovin
+ * @license MIT
  */
 
 #ifndef HEADER_wilcot_io_Reader
@@ -12,14 +12,14 @@
 
 namespace wilcot { namespace io {
 
-/*!
- * Reader class
+/**
+ * Class Reader.
  */
 class Reader : public Object
 {
 public:
-	/*!
-	 * A constructor
+	/**
+	 * Reader constructor.
 	 */
 	Reader(Stream& stream);
 

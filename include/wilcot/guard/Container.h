@@ -1,6 +1,6 @@
-/*!
- * \author Ivan Udovin
- * \license http://www.spdx.org/licenses/MIT
+/**
+ * @author Ivan Udovin
+ * @license MIT
  */
 
 #ifndef HEADER_wilcot_guard_Container
@@ -13,63 +13,69 @@
 
 namespace wilcot { namespace guard {
 
-/*!
- * \since 0.1.0
+/**
+ * Class Container.
+ * 
+ * @since 0.1.0
  */
 class Container : public Object
 {
 public:
-	/*!
-	 * Container constructor
+	/**
+	 * Container constructor.
 	 */
 	Container();
 
-	/*!
-	 * Container destructor
+	/**
+	 * Container destructor.
 	 */
 	~Container();
 
-	/*!
-	 * Start container
+	/**
+	 * Start container.
 	 */
 	void start();
 
-	/*!
-	 * Stop container
+	/**
+	 * Stop container.
 	 */
-	void stop();
+//	void stop();
 
-	/*!
-	 * Wait container for finished
+	/**
+	 * Wait container for finished.
 	 */
-	void wait();
+//	void wait();
 
-	/*!
-	 * Create and execute process in this container
+	/**
+	 * Create and execute process in this container.
 	 *
-	 * \param process
+	 * @param process
 	 */
-	//void attach(Process& process);
+//	void attach(Process& process);
 
 private:
 	int handle_;
 
-	/*!
-	 * An entry point for child process
+	int pipe_[2];
+
+	/**
+	 * An entry point for child process.
 	 *
-	 * \param process
-	 * \return
+	 * @param process
+	 * @return
 	 */
 	static int entryPoint_(void* process);
 
-	/*!
-	 * An entry point for child process
+	/**
+	 * An entry point for child process.
 	 *
-	 * \return
+	 * @return
 	 */
 	int entryPoint_();
 
-	void setupUserNamespace_();
+	void setupUserNamespaceFromParent_();
+
+	void setupUserNamespaceFromChild_();
 
 	void setupMountNamespace_();
 
