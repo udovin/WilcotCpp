@@ -3,6 +3,7 @@ LIBRARY := wilcot
 # Path to directories
 SOURCE_DIRECTORY := source
 INCLUDE_DIRECTORY := include
+LIBRARY_DIRECTORY := library
 TESTS_DIRECTORY := tests
 
 # Compiler settings
@@ -16,7 +17,7 @@ find = $(foreach file, $(wildcard $1/*), $(filter $2, $(file)) $(call find, $(fi
 SOURCE_FILES := $(call find, $(SOURCE_DIRECTORY), %.cpp)
 OBJECT_FILES := $(patsubst %.cpp, %.o, $(SOURCE_FILES))
 
-LIBRARY_FILE := lib$(LIBRARY).a
+LIBRARY_FILE := $(LIBRARY_DIRECTORY)/lib$(LIBRARY).a
 
 SOURCE_TESTS := $(call find, $(TESTS_DIRECTORY), %.cpp)
 BINARY_TESTS := $(patsubst %.cpp, %, $(SOURCE_TESTS))
