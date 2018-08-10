@@ -58,6 +58,8 @@ private:
 
 	int pipe_[2];
 
+	int namespaceHandles_[5];
+
 	/**
 	 * An entry point for child process.
 	 *
@@ -73,19 +75,37 @@ private:
 	 */
 	int entryPoint_();
 
-	void setupUserNamespaceFromParent_();
+	/**
+	 * Make all mapping for users and groups.
+	 */
+	void prepareUserNamespace_();
 
-	void setupUserNamespaceFromChild_();
+	void setupNamespaceHandles_();
 
+	/**
+	 * Setup user namespace.
+	 */
+	void setupUserNamespace_();
+
+	/**
+	 * Setup mount namespace.
+	 */
 	void setupMountNamespace_();
 
+	/**
+	 * Setup network namespace.
+	 */
 	void setupNetworkNamespace_();
 
+	/**
+	 * Setup UTS namespace.
+	 */
 	void setupUtsNamespace_();
 
+	/**
+	 * Setup IPC namespace.
+	 */
 	void setupIpcNamespace_();
-
-	void setupCgroupNamespace_();
 };
 
 }}

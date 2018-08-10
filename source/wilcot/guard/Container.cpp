@@ -21,6 +21,7 @@
 #include <sstream>
 #include <cstdlib>
 #include <cstdio>
+#include <cstring>
 
 #define STACK_SIZE__ 1048576
 
@@ -53,15 +54,15 @@ void Container::start()
 		throw std::runtime_error("Unable to create pipe.");
 	}
 
-	// Child process needs separate stack
+	// Child process needs separate stack.
 	char *stack = new char[STACK_SIZE__];
 
-	// Trying to clone current container
+	// Trying to clone current container.
 	handle_ = clone(
 		Container::entryPoint_,
 		static_cast<void *>(stack + STACK_SIZE__),
 		CLONE_NEWUSER | CLONE_NEWNS | CLONE_NEWNET | CLONE_NEWUTS |
-			CLONE_NEWIPC | CLONE_NEWCGROUP | CLONE_NEWPID | SIGCHLD,
+			CLONE_NEWIPC | CLONE_NEWPID | SIGCHLD,
 		static_cast<void *>(this)
 	);
 
@@ -79,7 +80,9 @@ void Container::start()
 	}
 
 #ifdef WILCOT_SYSTEM_LINUX
-	setupUserNamespace_();
+	prepareUserNamespace_();
+
+	setupNamespaceHandles_();
 #endif
 }
 
@@ -112,7 +115,7 @@ int Container::entryPoint_()
 
 	try
 	{
-		setupUserNamespaceFromChild_();
+		setupUserNamespace_();
 
 		// Now we should initialize mount namespace.
 		setupMountNamespace_();
@@ -122,8 +125,6 @@ int Container::entryPoint_()
 		setupUtsNamespace_();
 
 		setupIpcNamespace_();
-
-		setupCgroupNamespace_();
 	}
 	catch (std::exception& exception)
 	{
@@ -131,7 +132,7 @@ int Container::entryPoint_()
 	}
 }
 
-void Container::setupUserNamespaceFromParent_()
+void Container::prepareUserNamespace_()
 {
 #ifdef WILCOT_SYSTEM_LINUX
 	int fd;
@@ -168,7 +169,27 @@ void Container::setupUserNamespaceFromParent_()
 #endif
 }
 
-void Container::setupUserNamespaceFromChild_()
+static const char* NAMESPACE_FILES__[5] = {
+	"/proc/%d/ns/user",
+	"/proc/%d/ns/mnt",
+	"/proc/%d/ns/net",
+	"/proc/%d/ns/utc",
+	"/proc/%d/ns/ipc"
+};
+
+void Container::setupNamespaceHandles_()
+{
+	char path[40];
+
+	for (int i = 0; i < 5; i++)
+	{
+		sprintf(path, NAMESPACE_FILES__[i], handle_);
+
+		namespaceHandles_[i] = open(path, O_RDONLY);
+	}
+}
+
+void Container::setupUserNamespace_()
 {
 #ifdef WILCOT_SYSTEM_LINUX
 	char c;
@@ -204,16 +225,15 @@ void Container::setupNetworkNamespace_()
 #endif
 }
 
-static std::string getRandomString__(size_t length)
+static std::string getRandomString__(std::size_t length)
 {
 	std::stringstream ss;
-	std::random_device rd;
-	std::mt19937 mt(rd);
-	std::uniform_int_distribution<int> gen;
 
-	for (int i = 0; i < length; i++)
+	srand(time(NULL));
+
+	for (std::size_t i = 0; i < length; i++)
 	{
-		ss << "0123456789abcdef"[gen(mt) % 16];
+		ss << "0123456789abcdef"[rand() % 16];
 	}
 
 	return ss.str();
