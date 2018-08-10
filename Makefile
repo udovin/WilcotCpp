@@ -36,6 +36,7 @@ clean:
 
 $(LIBRARY_FILE): $(OBJECT_FILES)
 	@echo Create library "$@"
+	@mkdir -p $(LIBRARY_DIRECTORY)
 	@ar rcs $@ $^
 
 $(SOURCE_DIRECTORY)/%.o: $(SOURCE_DIRECTORY)/%.cpp
@@ -44,7 +45,7 @@ $(SOURCE_DIRECTORY)/%.o: $(SOURCE_DIRECTORY)/%.cpp
 
 $(TESTS_DIRECTORY)/%: $(TESTS_DIRECTORY)/%.cpp
 	@echo Compile test "$<"
-	@$(COMPILER) $(COMPILE_FLAGS) -L/source -o $@ $< -l$(LIBRARY)
+	@$(COMPILER) $(COMPILE_FLAGS) -L$(LIBRARY_DIRECTORY) -o $@ $< -l$(LIBRARY)
 	@echo Run test "$<"
 	@./$@ >/dev/null 2>&1
 	@echo Test completed!
