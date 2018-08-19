@@ -3,43 +3,52 @@
  * @license MIT
  */
 
-#ifndef HEADER_wilcot_io_Stream
-#define HEADER_wilcot_io_Stream
+#ifndef HEADER_wilcot_io_IStream
+#define HEADER_wilcot_io_IStream
+
+#include <wilcot/system/detect.h>
 
 #include <cstddef>
 
 namespace wilcot { namespace io {
 
 /**
- * Interface Stream.
+ * Interface IStream
+ *
+ * @since 0.0.1
  */
-class Stream
-{
+class IStream {
 public:
 	/**
-	 * Read bytes from stream.
+	 * Read bytes from stream
 	 *
 	 * @param buffer
 	 * @param count
 	 * @return
+	 *
+	 * @since 0.0.1
 	 */
 	virtual std::size_t read(void* buffer, std::size_t count) = 0;
 
 	/**
-	 * Write bytes to stream.
+	 * Write bytes to stream
 	 *
 	 * @param buffer
 	 * @param size
 	 * @return
+	 *
+	 * @since 0.0.1
 	 */
 	virtual std::size_t write(const void* buffer, std::size_t count) = 0;
 
 	/**
-	 * Close stream.
+	 * Close stream
+	 *
+	 * @since 0.0.1
 	 */
-	virtual void close() = 0;
+	virtual IStream& close() = 0;
 };
 
 }}
 
-#endif // HEADER_wilcot_io_Stream
+#endif // HEADER_wilcot_io_IStream

@@ -8,24 +8,61 @@
 
 #include <wilcot/Object.h>
 
-#include <wilcot/io/Stream.h>
+#include <wilcot/io/IStream.h>
+
+#include <string>
 
 namespace wilcot { namespace io {
 
 /**
- * Class Reader.
+ * Class Reader
+ *
+ * @since 0.0.1
  */
-class Reader : public Object
-{
+class Reader : public Object {
 public:
 	/**
-	 * Reader constructor.
+	 * Reader constructor
+	 *
+	 * @since 0.0.1
 	 */
-	Reader(Stream& stream);
+	Reader(IStream& stream);
+
+	/**
+	 * Read bytes from stream
+	 *
+	 * @param buffer
+	 * @param count
+	 * @return
+	 *
+	 * @since 0.0.1
+	 */
+	virtual std::size_t read(void* buffer, std::size_t count);
 
 private:
-	Stream& stream_;
+	/**
+	 * @since 0.0.1
+	 */
+	IStream& stream_;
 };
+
+/**
+ * @param reader 
+ * @param c 
+ * @return
+ *
+ * @since 0.0.1
+ */
+Reader& operator>>(Reader& reader, char& c);
+
+/**
+ * @param reader 
+ * @param s 
+ * @return
+ *
+ * @since 0.0.1
+ */
+Reader& operator>>(Reader& reader, std::string& s);
 
 }}
 

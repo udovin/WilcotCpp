@@ -10,42 +10,53 @@
 
 namespace wilcot { namespace io {
 
+const FileStream::Mode FileStream::READ = 1;
+
+const FileStream::Mode FileStream::WRITE = 2;
+
+/**
+ * @todo Implement more modes for file stream
+ * @todo Handle all errors when file is opened
+ */
 FileStream::FileStream(const system::Path& path, Mode mode)
-	: handle_(system::FileHandle::INVALID_VALUE)
-{
-	switch (mode)
-	{
-	case READ:
-		handle_ = ::open(path, O_RDONLY);
-		break;
-	case WRITE:
-		handle_ = ::open(path, O_WRONLY | O_CREAT | O_TRUNC);
-		break;
+	: handle_(system::IFileHandle::INVALID_VALUE) {
+	int flags = 0;
+
+	if ((mode & READ) == READ) {
+		flags |= O_RDONLY;
 	}
+
+	if ((mode & WRITE) == WRITE) {
+		// For more convenient usage we can implicitly add
+		// flags for creating and clearing the file.
+		flags |= O_WRONLY | O_CREAT | O_TRUNC;
+	}
+
+	handle_ = ::open(path, flags);
 }
 
-FileStream::~FileStream()
-{
+FileStream::~FileStream() {
 	close();
 }
 
-std::size_t FileStream::read(void* buffer, std::size_t count)
-{
+std::size_t FileStream::read(void* buffer, std::size_t count) {
 	return ::read(handle_, buffer, count);
 }
 
-std::size_t FileStream::write(const void* buffer, std::size_t count)
-{
+std::size_t FileStream::write(const void* buffer, std::size_t count) {
 	return ::write(handle_, buffer, count);
 }
 
-void FileStream::close()
-{
-	::close(handle_);
+IStream& FileStream::close() {
+	if (handle_ != system::IFileHandle::INVALID_VALUE) {
+		::close(handle_);
+		handle_ = system::IFileHandle::INVALID_VALUE;
+	}
+
+	return *this;
 }
 
-system::FileHandle::Handle FileStream::getHandle() const
-{
+system::IFileHandle::Handle FileStream::getHandle() const {
 	return handle_;
 }
 

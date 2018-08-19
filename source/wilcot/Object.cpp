@@ -7,7 +7,6 @@
 
 namespace wilcot {
 
-Object::~Object()
-{}
+Object::~Object() {}
 
 }

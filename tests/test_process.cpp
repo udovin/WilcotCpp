@@ -8,8 +8,7 @@
 
 #include <wilcot/system/Process.h>
 
-int main(int argc, char* argv[])
-{
+int main(int argc, char* argv[]) {
 	wilcot::system::Process process;
 
 	process.setProgram("/dev/null");

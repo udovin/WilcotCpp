@@ -8,132 +8,170 @@
 
 #include <wilcot/Object.h>
 
-#include <wilcot/system/detect.h>
-
 #include <string>
 
 namespace wilcot { namespace system {
 
 /**
- * Class Path.
+ * Class Path
+ *
+ * @since 0.0.1
  */
-class Path : public Object
-{
+class Path : public Object {
 public:
 	/**
-	 * Path constructor.
+	 * Path constructor
+	 *
+	 * @since 0.0.1
 	 */
 	Path();
 
 	/**
-	 * Path copy constructor.
+	 * Path copy constructor
 	 *
 	 * @param other
+	 *
+	 * @since 0.0.1
 	 */
 	Path(const Path& other);
 
 	/**
 	 * @param other
 	 * @return
+	 *
+	 * @since 0.0.1
 	 */
 	Path& operator=(const Path& other);
 
 	/**
-	 * A constructor.
+	 * Path constructor
 	 *
 	 * @param path
+	 *
+	 * @since 0.0.1
 	 */
 	Path(const char* path);
 
 	/**
-	 * A constructor.
+	 * Path constructor
 	 *
 	 * @param path
+	 *
+	 * @since 0.0.1
 	 */
 	Path(const std::string& path);
 
 	/**
-	 * Get raw path string.
+	 * Get raw path string
 	 *
 	 * @return
+	 *
+	 * @since 0.0.1
 	 */
 	operator const char*() const;
 
 	/**
-	 * Check that path is absolute.
+	 * Check that path is absolute
 	 *
 	 * @return
+	 *
+	 * @since 0.0.1
 	 */
 	bool isAbsolute() const;
 
 	/**
-	 * Get absolute path.
+	 * Get absolute path
 	 *
 	 * @return
+	 *
+	 * @since 0.0.1
 	 */
 	Path getAbsolute() const;
 
 	/**
 	 * @param other
 	 * @return
+	 *
+	 * @since 0.0.1
 	 */
 	Path& operator+=(const Path& other);
 
 	/**
 	 * @param other
 	 * @return
+	 *
+	 * @since 0.0.1
 	 */
 	Path& operator/=(const Path& other);
 
 	/**
 	 * @param other
 	 * @return
+	 *
+	 * @since 0.0.1
 	 */
 	Path operator+(const Path& other) const;
 
 	/**
 	 * @param other
 	 * @return
+	 *
+	 * @since 0.0.1
 	 */
 	Path operator/(const Path& other) const;
 
 	/**
 	 * @param other
 	 * @return
+	 *
+	 * @since 0.0.1
 	 */
 	bool operator==(const Path& other) const;
 
 	/**
 	 * @param other
 	 * @return
+	 *
+	 * @since 0.0.1
 	 */
 	bool operator!=(const Path& other) const;
 
 	/**
 	 * @param other
 	 * @return
+	 *
+	 * @since 0.0.1
 	 */
 	bool operator<(const Path& other) const;
 
 	/**
 	 * @param other
 	 * @return
+	 *
+	 * @since 0.0.1
 	 */
 	bool operator<=(const Path& other) const;
 
 	/**
 	 * @param other
 	 * @return
+	 *
+	 * @since 0.0.1
 	 */
 	bool operator>(const Path& other) const;
 
 	/**
 	 * @param other
 	 * @return
+	 *
+	 * @since 0.0.1
 	 */
 	bool operator>=(const Path& other) const;
 
 private:
+	/**
+	 * @since 0.0.1
+	 */
 	std::string path_;
 };
 

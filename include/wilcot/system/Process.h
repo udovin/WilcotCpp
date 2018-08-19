@@ -8,144 +8,214 @@
 
 #include <wilcot/Object.h>
 
-#include <wilcot/system/detect.h>
 #include <wilcot/system/Path.h>
-#include <wilcot/system/FileHandle.h>
+#include <wilcot/system/IFileHandle.h>
 
 #include <vector>
 
 namespace wilcot { namespace system {
 
 /**
- * Class Process.
+ * Class Process
+ *
+ * @since 0.0.1
  */
-class Process : public Object
-{
+class Process : public Object {
 public:
 	/**
-	 * Process constructor.
+	 * Process constructor
+	 *
+	 * @since 0.0.1
 	 */
 	Process();
 
 	/**
-	 * Process destructor.
+	 * Process destructor
+	 *
+	 * @since 0.0.1
 	 */
 	~Process();
 
 	/**
-	 * Get path to executable.
+	 * Get path to executable
 	 *
 	 * @return
+	 *
+	 * @since 0.0.1
 	 */
 	const Path& getProgram() const;
 
 	/**
-	 * Set path to executable.
+	 * Set path to executable
 	 *
 	 * @param program
+	 * @return
+	 *
+	 * @since 0.0.1
 	 */
-	void setProgram(const Path& program);
+	Process& setProgram(const Path& program);
 
 	/**
-	 * Get execution arguments.
+	 * Get execution arguments
 	 *
 	 * @return
+	 *
+	 * @since 0.0.1
 	 */
 	const std::vector<std::string>& getArguments() const;
 
 	/**
-	 * Set execution arguments.
+	 * Set execution arguments
 	 *
 	 * @param arguments
+	 * @return
+	 *
+	 * @since 0.0.1
 	 */
-	void setArguments(const std::vector<std::string>& arguments);
+	Process& setArguments(const std::vector<std::string>& arguments);
 
 	/**
-	 * Get working directory.
+	 * Get working directory
 	 *
 	 * @return
+	 *
+	 * @since 0.0.1
 	 */
 	const Path& getWorkingDirectory() const;
 
 	/**
-	 * Set working directory.
+	 * Set working directory
 	 *
 	 * @param workingDirectory
+	 * @return
+	 *
+	 * @since 0.0.1
 	 */
-	void setWorkingDirectory(const Path& workingDirectory);
+	Process& setWorkingDirectory(const Path& workingDirectory);
 
 	/**
-	 * Set standard input.
+	 * Set standard input
 	 *
 	 * @param inputHandle
+	 * @return
+	 *
+	 * @since 0.0.1
 	 */
-	void setStandardInput(FileHandle& inputHandle);
+	Process& setStandardInput(IFileHandle& inputHandle);
 
 	/**
-	 * Set standard output.
+	 * Set standard output
 	 *
 	 * @param outputHandle
+	 * @return
+	 *
+	 * @since 0.0.1
 	 */
-	void setStandardOutput(FileHandle& outputHandle);
+	Process& setStandardOutput(IFileHandle& outputHandle);
 
 	/**
-	 * Set standard error.
+	 * Set standard error
 	 *
 	 * @param outputHandle
+	 * @return
+	 *
+	 * @since 0.0.1
 	 */
-	void setStandardError(FileHandle& outputHandle);
+	Process& setStandardError(IFileHandle& outputHandle);
 
 	/**
-	 * Get exit code.
+	 * Get exit code
 	 *
 	 * @return
+	 *
+	 * @since 0.0.1
 	 */
 	int getExitCode() const;
 
 	/**
-	 * Start process.
+	 * Start process
+	 *
+	 * @return
+	 *
+	 * @since 0.0.1
 	 */
-	void start();
+	Process& start();
 
 	/**
-	 * Stop process.
+	 * Stop process
+	 *
+	 * @return
+	 *
+	 * @since 0.0.1
 	 */
-	void stop();
+	Process& stop();
 
 	/**
-	 * Wait process for finished.
+	 * Wait process for finished
+	 *
+	 * @return
+	 *
+	 * @since 0.0.1
 	 */
-	void wait();
+	Process& wait();
 
 private:
+	/**
+	 * @since 0.0.1
+	 */
 	int handle_;
 
+	/**
+	 * @since 0.0.1
+	 */
 	Path program_;
 
+	/**
+	 * @since 0.0.1
+	 */
 	std::vector<std::string> arguments_;
 
+	/**
+	 * @since 0.0.1
+	 */
 	Path workingDirectory_;
 
+	/**
+	 * @since 0.0.1
+	 */
 	int standardInputHandle_;
 
+	/**
+	 * @since 0.0.1
+	 */
 	int standardOutputHandle_;
 
+	/**
+	 * @since 0.0.1
+	 */
 	int standardErrorHandle_;
 
+	/**
+	 * @since 0.0.1
+	 */
 	int exitCode_;
 
 	/**
-	 * An entry point for child process.
+	 * An entry point for child process
 	 *
 	 * @param process
 	 * @return
+	 *
+	 * @since 0.0.1
 	 */
 	static int entryPoint_(void* process);
 
 	/**
-	 * An entry point for child process.
+	 * An entry point for child process
 	 *
 	 * @return
+	 *
+	 * @since 0.0.1
 	 */
 	int entryPoint_();
 };

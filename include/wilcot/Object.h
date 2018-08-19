@@ -6,16 +6,21 @@
 #ifndef HEADER_wilcot_Object
 #define HEADER_wilcot_Object
 
+#include <wilcot/system/detect.h>
+
 namespace wilcot {
 
 /**
- * Object class.
+ * Class Object
+ *
+ * @since 0.0.1
  */
-class Object
-{
+class Object {
 public:
 	/**
-	 * A destructor.
+	 * Object destructor
+	 *
+	 * @since 0.0.1
 	 */
 	virtual ~Object();
 };
