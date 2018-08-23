@@ -3,40 +3,58 @@
  * @license MIT
  */
 
-#include <cassert>
-#include <cstdlib>
+#include <wilcot/tests/TestCase.h>
 
 #include <wilcot/system/Process.h>
 
-int main(int argc, char* argv[]) {
-	wilcot::system::Process process;
+class ProcessTestCase : public wilcot::tests::TestCase {
+public:
+	void testDevNull() {
+		wilcot::system::Process process;
 
-	process.setProgram("/dev/null");
+		process.setProgram("/dev/null");
+		process.start();
+		process.wait();
 
-	process.start();
-	process.wait();
+		assert(process.getExitCode() != 0);
+	}
 
-	assert(process.getExitCode() != 0);
+	void testBinLs() {
+		wilcot::system::Process process;
+		std::vector<std::string> arguments;
 
-	std::vector<std::string> arguments;
+		arguments.push_back("/bin/ls");
+		arguments.push_back("-al");
 
-	arguments.push_back("/bin/ls");
-	arguments.push_back("-al");
+		process.setProgram("/bin/ls");
+		process.setArguments(arguments);
+		process.start();
+		process.wait();
 
-	process.setProgram("/bin/ls");
-	process.setArguments(arguments);
+		assert(process.getExitCode() == 0);
+	}
 
-	process.start();
-	process.wait();
+	void testBinLsWorkDir() {
+		wilcot::system::Process process;
+		std::vector<std::string> arguments;
 
-	assert(process.getExitCode() == 0);
+		arguments.push_back("/bin/ls");
+		arguments.push_back("-al");
 
-	process.setWorkingDirectory("/bin");
+		process.setProgram("/bin/ls");
+		process.setArguments(arguments);
+		process.setWorkingDirectory("/bin");
+		process.start();
+		process.wait();
 
-	process.start();
-	process.wait();
+		assert(process.getExitCode() == 0);
+	}
 
-	assert(process.getExitCode() == 0);
+	ProcessTestCase() {
+		registerTest(testDevNull);
+		registerTest(testBinLs);
+		registerTest(testBinLsWorkDir);
+	}
+};
 
-	return EXIT_SUCCESS;
-}
+REGISTER_TEST_CASE(ProcessTestCase)
