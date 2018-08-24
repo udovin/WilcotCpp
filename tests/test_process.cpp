@@ -51,9 +51,9 @@ public:
 	}
 
 	ProcessTestCase() {
-		registerTest(testDevNull);
-		registerTest(testBinLs);
-		registerTest(testBinLsWorkDir);
+		REGISTER_TEST(testDevNull);
+		REGISTER_TEST(testBinLs);
+		REGISTER_TEST(testBinLsWorkDir);
 	}
 };
 

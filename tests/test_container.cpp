@@ -14,7 +14,7 @@ public:
 	}
 
 	ContainerTestCase() {
-		registerTest(testCreateContainer);
+		REGISTER_TEST(testCreateContainer);
 	}
 };
 

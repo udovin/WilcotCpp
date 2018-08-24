@@ -3,6 +3,7 @@
 
 #include <wilcot/Object.h>
 
+#include <string>
 #include <vector>
 
 namespace wilcot { namespace tests {
@@ -10,6 +11,10 @@ namespace wilcot { namespace tests {
 class TestCase : public Object {
 private:
 	struct ITest_ {
+		std::string name;
+
+		ITest_(const std::string& name) : name(name) {}
+
 		virtual ~ITest_() {};
 
 		virtual void invoke() const = 0;
@@ -21,8 +26,8 @@ private:
 
 		void (T::*method)();
 
-		Test_(T* object, void (T::*method)())
-			: object(object), method(method) {}
+		Test_(const std::string& name, T* object, void (T::*method)())
+			: ITest_(name), object(object), method(method) {}
 
 		void invoke() const {
 			(object->*method)();
@@ -42,9 +47,9 @@ protected:
 	TestCase();
 
 	template<class T>
-	void registerTest(void (T::*method)()) {
+	void registerTest(const std::string& name, void (T::*method)()) {
 		tests_.push_back(
-			new Test_<T>(dynamic_cast<T*>(this), method));
+			new Test_<T>(name, dynamic_cast<T*>(this), method));
 	}
 
 	virtual void setUp();
@@ -53,6 +58,11 @@ protected:
 
 	void assert(bool result);
 };
+
+#define REGISTER_TEST(method) \
+	do { \
+		registerTest(#method, method); \
+	} while (false)
 
 #define REGISTER_TEST_CASE(TestCase) \
 	int main(int argc, char* argv[]) { \
