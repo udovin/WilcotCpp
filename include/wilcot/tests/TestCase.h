@@ -1,5 +1,5 @@
-#ifndef HEADER_wilcot_tests_TestCase
-#define HEADER_wilcot_tests_TestCase
+#ifndef _HEADER_wilcot_tests_TestCase
+#define _HEADER_wilcot_tests_TestCase
 
 #include <wilcot/Object.h>
 
@@ -47,7 +47,7 @@ protected:
 	TestCase();
 
 	template<class T>
-	void registerTest(const std::string& name, void (T::*method)()) {
+	void addTest(const std::string& name, void (T::*method)()) {
 		tests_.push_back(
 			new Test_<T>(name, dynamic_cast<T*>(this), method));
 	}
@@ -59,17 +59,6 @@ protected:
 	void assert(bool result);
 };
 
-#define REGISTER_TEST(method) \
-	do { \
-		registerTest(#method, method); \
-	} while (false)
-
-#define REGISTER_TEST_CASE(TestCase) \
-	int main(int argc, char* argv[]) { \
-		TestCase().run(); \
-		return 0;\
-	}
-
 }}
 
-#endif // HEADER_wilcot_tests_TestCase
+#endif // _HEADER_wilcot_tests_TestCase

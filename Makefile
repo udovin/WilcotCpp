@@ -50,5 +50,5 @@ $(BUILD_DIRECTORY)/%: $(TESTS_DIRECTORY)/%.cpp
 	@mkdir -p "$(dir $@)"
 	@$(COMPILER) $(COMPILE_FLAGS) -L$(LIBRARY_DIRECTORY) -o "$@" "$<" -l$(LIBRARY)
 	@echo "Run test '$<'"
-	./$@ 2>/dev/null
+	./$@ >/dev/null
 	@rm -f "$@"

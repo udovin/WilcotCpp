@@ -14,8 +14,11 @@ public:
 	}
 
 	ContainerTestCase() {
-		REGISTER_TEST(testCreateContainer);
+		addTest("testCreateContainer", &ContainerTestCase::testCreateContainer);
 	}
 };
 
-REGISTER_TEST_CASE(ContainerTestCase)
+int main(int argc, char* argv[]) {
+	ContainerTestCase().run();
+	return 0;
+}

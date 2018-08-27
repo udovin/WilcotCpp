@@ -16,14 +16,14 @@ TestCase& TestCase::run() {
 	for (std::size_t i = 0; i < tests_.size(); i++) {
 		try {
 			tests_[i]->invoke();
-			std::cout << '+';
+			std::cerr << '+';
 		} catch (const Assert_& exception) {
-			std::cout << '-';
+			std::cerr << '-';
 		} catch (const std::exception& exception) {
-			std::cout << '!';
+			std::cerr << '!';
 		}
 	}
-	std::cout << std::endl;
+	std::cerr << std::endl;
 
 	return *this;
 }
@@ -36,7 +36,7 @@ void TestCase::assert(bool result) {
 	if (!result) {
 		throw Assert_();
 	}
-	std::cout << '.';
+	std::cerr << '.';
 }
 
 }}

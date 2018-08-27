@@ -51,10 +51,13 @@ public:
 	}
 
 	ProcessTestCase() {
-		REGISTER_TEST(testDevNull);
-		REGISTER_TEST(testBinLs);
-		REGISTER_TEST(testBinLsWorkDir);
+		addTest("testDevNull", &ProcessTestCase::testDevNull);
+		addTest("testBinLs", &ProcessTestCase::testBinLs);
+		addTest("testBinLsWorkDir", &ProcessTestCase::testBinLsWorkDir);
 	}
 };
 
-REGISTER_TEST_CASE(ProcessTestCase)
+int main(int argc, char* argv[]) {
+	ProcessTestCase().run();
+	return 0;
+}
