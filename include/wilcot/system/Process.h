@@ -3,8 +3,8 @@
  * @license MIT
  */
 
-#ifndef HEADER_wilcot_system_Process
-#define HEADER_wilcot_system_Process
+#ifndef _HEADER_wilcot_system_Process
+#define _HEADER_wilcot_system_Process
 
 #include <wilcot/Object.h>
 
@@ -86,12 +86,12 @@ public:
 	/**
 	 * Set working directory
 	 *
-	 * @param workingDirectory
+	 * @param directory
 	 * @return
 	 *
 	 * @since 0.0.1
 	 */
-	Process& setWorkingDirectory(const Path& workingDirectory);
+	Process& setWorkingDirectory(const Path& directory);
 
 	/**
 	 * Set standard input
@@ -222,4 +222,4 @@ private:
 
 }}
 
-#endif // HEADER_wilcot_system_Process
+#endif // _HEADER_wilcot_system_Process

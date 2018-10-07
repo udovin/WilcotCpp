@@ -15,6 +15,7 @@
 #	include <sys/wait.h>
 #	include <sys/mount.h>
 #	include <sys/stat.h>
+#	include <sys/syscall.h>
 #	include <cstring>
 #endif
 
@@ -25,11 +26,11 @@
 #include <cstring>
 #include <ctime>
 
-#define STACK_SIZE__ 1048576
-
 namespace wilcot { namespace guard {
 
 #ifdef WILCOT_SYSTEM_LINUX
+static const std::size_t STACK_SIZE__ = 1048576;
+
 static void createDirectory__(const system::Path& path) {
 	mkdir(path, 0777);
 }
@@ -37,11 +38,97 @@ static void createDirectory__(const system::Path& path) {
 static void createFile__(const system::Path& path) {
 	close(open(path, O_WRONLY | O_CREAT | O_TRUNC, 0644));
 }
+
+static std::string getRandomString__(std::size_t length) {
+	std::stringstream ss;
+
+	srand(time(NULL));
+	for (std::size_t i = 0; i < length; i++) {
+		ss << "0123456789abcdef"[rand() % 16];
+	}
+
+	return ss.str();
+}
+
+int pivotRoot__(const char* oldRoot, const char* newRoot) {
+	return syscall(SYS_pivot_root, oldRoot, newRoot);
+}
+
 #endif
 
-Container::Container() : handle_(-1) {}
+Container::Container()
+	: handle_(-1), program_(), arguments_()
+	, workingDirectory_("/")
+	, standardInputHandle_(STDIN_FILENO)
+	, standardOutputHandle_(STDOUT_FILENO)
+	, standardErrorHandle_(STDERR_FILENO)
+	, bindMounts_()
+	, exitCode_(0) {}
 
-Container::~Container() {}
+Container::~Container() {
+	stop();
+}
+
+const system::Path& Container::getProgram() const {
+	return program_;
+}
+
+Container& Container::setProgram(const system::Path& program) {
+	program_ = program;
+
+	return *this;
+}
+
+const std::vector<std::string>& Container::getArguments() const {
+	return arguments_;
+}
+
+Container& Container::setArguments(
+	const std::vector<std::string>& arguments) {
+	arguments_ = arguments;
+
+	return *this;
+}
+
+const system::Path& Container::getWorkingDirectory() const {
+	return workingDirectory_;
+}
+
+Container& Container::setWorkingDirectory(const system::Path& directory) {
+	workingDirectory_ = directory;
+
+	return *this;
+}
+
+Container& Container::setStandardInput(system::IFileHandle& inputHandle) {
+	standardInputHandle_ = inputHandle.getHandle();
+
+	return *this;
+}
+
+Container& Container::setStandardOutput(system::IFileHandle& outputHandle) {
+	standardOutputHandle_ = outputHandle.getHandle();
+
+	return *this;
+}
+
+Container& Container::setStandardError(system::IFileHandle& outputHandle) {
+	standardErrorHandle_ = outputHandle.getHandle();
+
+	return *this;
+}
+
+Container& Container::addBindMount(
+	const system::Path& source, const system::Path& target, bool readOnly) {
+	bindMounts_.push_back(
+		std::make_pair(std::make_pair(source, target), readOnly));
+
+	return *this;
+}
+
+int Container::getExitCode() const {
+	return exitCode_;
+}
 
 Container& Container::start() {
 #ifdef WILCOT_SYSTEM_LINUX
@@ -56,8 +143,8 @@ Container& Container::start() {
 	handle_ = clone(
 		Container::entryPoint_,
 		static_cast<void *>(stack + STACK_SIZE__),
-		CLONE_NEWUSER | CLONE_NEWNS | CLONE_NEWNET | CLONE_NEWUTS |
-			CLONE_NEWIPC | CLONE_NEWPID | SIGCHLD,
+		CLONE_NEWUSER | CLONE_NEWNS | CLONE_NEWNET | CLONE_NEWUTS
+			| CLONE_NEWIPC | CLONE_NEWPID | SIGCHLD,
 		static_cast<void *>(this));
 
 	delete[] stack;
@@ -95,6 +182,7 @@ Container& Container::wait() {
 	int status;
 
 	waitpid(handle_, &status, 0);
+	exitCode_ = WEXITSTATUS(status);
 #endif
 
 	return *this;
@@ -117,7 +205,24 @@ int Container::entryPoint_() {
 		setupUtsNamespace_();
 		setupIpcNamespace_();
 
-		return EXIT_SUCCESS;
+		dup2(standardInputHandle_, STDIN_FILENO);
+		dup2(standardOutputHandle_, STDOUT_FILENO);
+		dup2(standardErrorHandle_, STDERR_FILENO);
+
+		// Convert string arguments to raw char arguments
+		char** arguments = new char*[arguments_.size() + 1];
+
+		for (std::size_t i = 0; i < arguments_.size(); i++) {
+			arguments[i] = const_cast<char*>(arguments_[i].c_str());
+		}
+
+		arguments[arguments_.size()] = NULL;
+
+		execv(program_, arguments);
+
+		delete [] arguments;
+
+		return EXIT_FAILURE;
 	} catch (std::exception& exception) {
 		return EXIT_FAILURE;
 	}
@@ -187,7 +292,7 @@ void Container::setupUserNamespace_() {
 	// We should wait for setup of user namespace from parent.
 	if (read(pipe_[0], &c, 1) != 0) {
 		throw std::runtime_error("Failed to wait pipe close.");
-    }
+	}
 #endif
 }
 
@@ -195,29 +300,57 @@ void Container::setupMountNamespace_() {
 #ifdef WILCOT_SYSTEM_LINUX
 	// First of all make all changes are private for current root.
 	if (mount("/", "/", NULL, MS_REC | MS_PRIVATE, NULL) == -1) {
-		exit(EXIT_FAILURE);
+		throw std::runtime_error("Failed to remount root as private");
 	}
 
-	// Mount proc directory if we create new PID namespace.
+	system::Path newRoot = "/tmp/container";
+	system::Path oldRoot = "/.OldRoot";
+
+	createDirectory__(newRoot);
+	createDirectory__(newRoot + oldRoot);
+
+	std::vector<BindMount_>::const_iterator it;
 
 	// Mount all rw and ro mounts of files and directories.
+	for (it = bindMounts_.begin(); it != bindMounts_.end(); it++) {
+		system::Path source = it->first.first;
+		system::Path target = newRoot / it->first.second;
+		if (mount(source, target, NULL, MS_BIND | MS_PRIVATE, NULL) == -1) {
+			throw std::runtime_error("Unable to mount directory");
+		}
+	}
 
 	// Remount read-only mounts.
+	for (it = bindMounts_.begin(); it != bindMounts_.end(); it++) {
+		if (it->second) {
+			system::Path target = newRoot / it->first.second;
+			if (mount(target, target, NULL, MS_REMOUNT | MS_RDONLY, NULL) == -1) {
+				throw std::runtime_error("Unable to mount directory");
+			}
+		}
+	}
+
+	if (mount(newRoot, newRoot, NULL, MS_BIND | MS_PRIVATE, NULL) == -1) {
+		throw std::runtime_error("Failed to remount new root");
+	}
+
+	if (pivotRoot__(newRoot, newRoot + oldRoot) != 0) {
+		throw std::runtime_error("Failed to pivot root");
+	}
+
+	if (umount2(oldRoot, MNT_DETACH)) {
+		throw std::runtime_error("Failed to unmount old root");
+	}
+
+	rmdir(oldRoot);
+
+	if (chdir(workingDirectory_) != 0) {
+		throw std::runtime_error("Failed to change working directory");
+	}
 #endif
 }
 
 void Container::setupNetworkNamespace_() {}
-
-static std::string getRandomString__(std::size_t length) {
-	std::stringstream ss;
-
-	srand(time(NULL));
-	for (std::size_t i = 0; i < length; i++) {
-		ss << "0123456789abcdef"[rand() % 16];
-	}
-
-	return ss.str();
-}
 
 void Container::setupUtsNamespace_() {
 #ifdef WILCOT_SYSTEM_LINUX

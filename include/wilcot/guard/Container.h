@@ -3,21 +3,29 @@
  * @license MIT
  */
 
-#ifndef HEADER_wilcot_guard_Container
-#define HEADER_wilcot_guard_Container
+#ifndef _HEADER_wilcot_guard_Container
+#define _HEADER_wilcot_guard_Container
 
 #include <wilcot/Object.h>
 
-//#include <wilcot/guard/Process.h>
+#include <wilcot/system/Path.h>
+#include <wilcot/system/IFileHandle.h>
+
+#include <string>
+#include <vector>
 
 namespace wilcot { namespace guard {
 
 /**
  * Class Container
- * 
+ *
  * @since 0.0.1
  */
 class Container : public Object {
+private:
+	typedef std::pair<system::Path, system::Path> PathPair_;
+	typedef std::pair<PathPair_, bool> BindMount_;
+
 public:
 	/**
 	 * Container constructor
@@ -32,6 +40,116 @@ public:
 	 * @since 0.0.1
 	 */
 	~Container();
+
+	/**
+	 * Get path to executable
+	 *
+	 * @return
+	 *
+	 * @since 0.0.1
+	 */
+	const system::Path& getProgram() const;
+
+	/**
+	 * Set path to executable
+	 *
+	 * @param program
+	 * @return
+	 *
+	 * @since 0.0.1
+	 */
+	Container& setProgram(const system::Path& program);
+
+	/**
+	 * Get execution arguments
+	 *
+	 * @return
+	 *
+	 * @since 0.0.1
+	 */
+	const std::vector<std::string>& getArguments() const;
+
+	/**
+	 * Set execution arguments
+	 *
+	 * @param arguments
+	 * @return
+	 *
+	 * @since 0.0.1
+	 */
+	Container& setArguments(const std::vector<std::string>& arguments);
+
+	/**
+	 * Get working directory
+	 *
+	 * @return
+	 *
+	 * @since 0.0.1
+	 */
+	const system::Path& getWorkingDirectory() const;
+
+	/**
+	 * Set working directory
+	 *
+	 * @param directory
+	 * @return
+	 *
+	 * @since 0.0.1
+	 */
+	Container& setWorkingDirectory(const system::Path& directory);
+
+	/**
+	 * Set standard input
+	 *
+	 * @param inputHandle
+	 * @return
+	 *
+	 * @since 0.0.1
+	 */
+	Container& setStandardInput(system::IFileHandle& inputHandle);
+
+	/**
+	 * Set standard output
+	 *
+	 * @param outputHandle
+	 * @return
+	 *
+	 * @since 0.0.1
+	 */
+	Container& setStandardOutput(system::IFileHandle& outputHandle);
+
+	/**
+	 * Set standard error
+	 *
+	 * @param outputHandle
+	 * @return
+	 *
+	 * @since 0.0.1
+	 */
+	Container& setStandardError(system::IFileHandle& outputHandle);
+
+	/**
+	 * Add bind mount
+	 *
+	 * @param source
+	 * @param target
+	 * @return
+	 *
+	 * @since 0.0.1
+	 */
+	Container& addBindMount(
+		const system::Path& source,
+		const system::Path& target,
+		bool readOnly = false);
+
+	/**
+	 * Get exit code
+	 *
+	 * @return
+	 *
+	 * @since 0.0.1
+	 */
+	int getExitCode() const;
 
 	/**
 	 * Start container
@@ -54,15 +172,6 @@ public:
 	 */
 	Container& wait();
 
-	/**
-	 * Create and execute process in this container
-	 *
-	 * @param process
-	 *
-	 * @since 0.0.1
-	 */
-//	void attach(Process& process);
-
 private:
 	/**
 	 * @since 0.0.1
@@ -72,8 +181,51 @@ private:
 	/**
 	 * @since 0.0.1
 	 */
+	system::Path program_;
+
+	/**
+	 * @since 0.0.1
+	 */
+	std::vector<std::string> arguments_;
+
+	/**
+	 * @since 0.0.1
+	 */
+	system::Path workingDirectory_;
+
+	/**
+	 * @since 0.0.1
+	 */
+	int standardInputHandle_;
+
+	/**
+	 * @since 0.0.1
+	 */
+	int standardOutputHandle_;
+
+	/**
+	 * @since 0.0.1
+	 */
+	int standardErrorHandle_;
+
+	/**
+	 * @since 0.0.1
+	 */
+	std::vector<BindMount_> bindMounts_;
+
+	/**
+	 * @since 0.0.1
+	 */
+	int exitCode_;
+
+	/**
+	 * @since 0.0.1
+	 */
 	int pipe_[2];
 
+	/**
+	 * @since 0.0.1
+	 */
 	int namespaceHandles_[5];
 
 	/**
@@ -97,49 +249,49 @@ private:
 
 	/**
 	 * Make all mapping for users and groups
-	 * 
+	 *
 	 * @since 0.0.1
 	 */
 	void prepareUserNamespace_();
 
 	/**
 	 * Open descriptors for namespaces
-	 * 
+	 *
 	 * @since 0.0.1
 	 */
 	void setupNamespaceHandles_();
 
 	/**
 	 * Setup user namespace
-	 * 
+	 *
 	 * @since 0.0.1
 	 */
 	void setupUserNamespace_();
 
 	/**
 	 * Setup mount namespace
-	 * 
+	 *
 	 * @since 0.0.1
 	 */
 	void setupMountNamespace_();
 
 	/**
 	 * Setup network namespace
-	 * 
+	 *
 	 * @since 0.0.1
 	 */
 	void setupNetworkNamespace_();
 
 	/**
 	 * Setup UTS namespace
-	 * 
+	 *
 	 * @since 0.0.1
 	 */
 	void setupUtsNamespace_();
 
 	/**
 	 * Setup IPC namespace
-	 * 
+	 *
 	 * @since 0.0.1
 	 */
 	void setupIpcNamespace_();
@@ -147,4 +299,4 @@ private:
 
 }}
 
-#endif // HEADER_wilcot_guard_Container
+#endif // _HEADER_wilcot_guard_Container

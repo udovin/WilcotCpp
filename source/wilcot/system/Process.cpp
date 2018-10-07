@@ -14,9 +14,11 @@
 #include <stdexcept>
 #include <cstdlib>
 
-#define STACK_SIZE__ 1048576
-
 namespace wilcot { namespace system {
+
+#ifdef WILCOT_SYSTEM_LINUX
+static const std::size_t STACK_SIZE__ = 1048576;
+#endif
 
 Process::Process()
 	: handle_(-1), program_(), arguments_()
@@ -54,8 +56,8 @@ const Path& Process::getWorkingDirectory() const {
 	return workingDirectory_;
 }
 
-Process& Process::setWorkingDirectory(const Path& workingDirectory) {
-	workingDirectory_ = workingDirectory;
+Process& Process::setWorkingDirectory(const Path& directory) {
+	workingDirectory_ = directory;
 
 	return *this;
 }
@@ -139,16 +141,17 @@ int Process::entryPoint_() {
 	}
 
 	// Convert string arguments to raw char arguments
-	std::vector<char*> arguments;
-	std::vector<std::string>::const_iterator it;
+	char** arguments = new char*[arguments_.size() + 1];
 
-	for (it = arguments_.begin(); it != arguments_.end(); ++it) {
-		arguments.push_back(const_cast<char*>(it->c_str()));
+	for (std::size_t i = 0; i < arguments_.size(); i++) {
+		arguments[i] = const_cast<char*>(arguments_[i].c_str());
 	}
 
-	arguments.push_back(NULL);
+	arguments[arguments_.size()] = NULL;
 
-	execv(program_, arguments.data());
+	execv(program_, arguments);
+
+	delete [] arguments;
 #endif
 
 	// Return failure code when execution failed
