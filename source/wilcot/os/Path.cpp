@@ -3,9 +3,9 @@
  * @license MIT
  */
 
-#include <wilcot/system/Path.h>
+#include <wilcot/os/Path.h>
 
-namespace wilcot { namespace system {
+namespace wilcot { namespace os {
 
 Path::Path() : path_() {}
 

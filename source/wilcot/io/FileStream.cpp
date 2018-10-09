@@ -18,8 +18,8 @@ const FileStream::Mode FileStream::WRITE = 2;
  * @todo Implement more modes for file stream
  * @todo Handle all errors when file is opened
  */
-FileStream::FileStream(const system::Path& path, Mode mode)
-	: handle_(system::IFileHandle::INVALID_VALUE) {
+FileStream::FileStream(const os::Path& path, Mode mode)
+	: handle_(os::IFileHandle::INVALID_VALUE) {
 	int flags = 0;
 
 	if ((mode & READ) == READ) {
@@ -48,15 +48,15 @@ std::size_t FileStream::write(const void* buffer, std::size_t count) {
 }
 
 IStream& FileStream::close() {
-	if (handle_ != system::IFileHandle::INVALID_VALUE) {
+	if (handle_ != os::IFileHandle::INVALID_VALUE) {
 		::close(handle_);
-		handle_ = system::IFileHandle::INVALID_VALUE;
+		handle_ = os::IFileHandle::INVALID_VALUE;
 	}
 
 	return *this;
 }
 
-system::IFileHandle::Handle FileStream::getHandle() const {
+os::IFileHandle::Handle FileStream::getHandle() const {
 	return handle_;
 }
 

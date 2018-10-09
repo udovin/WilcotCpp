@@ -3,9 +3,9 @@
  * @license MIT
  */
 
-#include <wilcot/system/Process.h>
+#include <wilcot/os/Process.h>
 
-#ifdef WILCOT_SYSTEM_LINUX
+#ifdef WILCOT_OS_LINUX
 #	include <unistd.h>
 #	include <signal.h>
 #	include <sys/wait.h>
@@ -14,9 +14,9 @@
 #include <stdexcept>
 #include <cstdlib>
 
-namespace wilcot { namespace system {
+namespace wilcot { namespace os {
 
-#ifdef WILCOT_SYSTEM_LINUX
+#ifdef WILCOT_OS_LINUX
 static const std::size_t STACK_SIZE__ = 1048576;
 #endif
 
@@ -85,7 +85,7 @@ int Process::getExitCode() const {
 }
 
 Process& Process::start() {
-#ifdef WILCOT_SYSTEM_LINUX
+#ifdef WILCOT_OS_LINUX
 	// Child process needs separate stack
 	char *stack = new char[STACK_SIZE__];
 
@@ -108,7 +108,7 @@ Process& Process::start() {
 }
 
 Process& Process::stop() {
-#ifdef WILCOT_SYSTEM_LINUX
+#ifdef WILCOT_OS_LINUX
 	kill(handle_, SIGKILL);
 #endif
 
@@ -116,7 +116,7 @@ Process& Process::stop() {
 }
 
 Process& Process::wait() {
-#ifdef WILCOT_SYSTEM_LINUX
+#ifdef WILCOT_OS_LINUX
 	int status;
 
 	waitpid(handle_, &status, 0);
@@ -131,7 +131,7 @@ int Process::entryPoint_(void* process) {
 }
 
 int Process::entryPoint_() {
-#ifdef WILCOT_SYSTEM_LINUX
+#ifdef WILCOT_OS_LINUX
 	dup2(standardInputHandle_, STDIN_FILENO);
 	dup2(standardOutputHandle_, STDOUT_FILENO);
 	dup2(standardErrorHandle_, STDERR_FILENO);

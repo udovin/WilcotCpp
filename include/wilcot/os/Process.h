@@ -3,17 +3,17 @@
  * @license MIT
  */
 
-#ifndef _HEADER_wilcot_system_Process
-#define _HEADER_wilcot_system_Process
+#ifndef _HEADER_wilcot_os_Process
+#define _HEADER_wilcot_os_Process
 
 #include <wilcot/Object.h>
 
-#include <wilcot/system/Path.h>
-#include <wilcot/system/IFileHandle.h>
+#include <wilcot/os/Path.h>
+#include <wilcot/os/IFileHandle.h>
 
 #include <vector>
 
-namespace wilcot { namespace system {
+namespace wilcot { namespace os {
 
 /**
  * Class Process
@@ -222,4 +222,4 @@ private:
 
 }}
 
-#endif // _HEADER_wilcot_system_Process
+#endif // _HEADER_wilcot_os_Process

@@ -3,14 +3,14 @@
  * @license MIT
  */
 
-#ifndef HEADER_wilcot_io_FileStream
-#define HEADER_wilcot_io_FileStream
+#ifndef _HEADER_wilcot_io_FileStream
+#define _HEADER_wilcot_io_FileStream
 
 #include <wilcot/Object.h>
 #include <wilcot/io/IStream.h>
-#include <wilcot/system/IFileHandle.h>
+#include <wilcot/os/IFileHandle.h>
 
-#include <wilcot/system/Path.h>
+#include <wilcot/os/Path.h>
 
 namespace wilcot { namespace io {
 
@@ -19,7 +19,7 @@ namespace wilcot { namespace io {
  *
  * @since 0.0.1
  */
-class FileStream : public Object, public IStream, public system::IFileHandle {
+class FileStream : public Object, public IStream, public os::IFileHandle {
 public:
 	/**
 	 * @since 0.0.1
@@ -44,7 +44,7 @@ public:
 	 *
 	 * @since 0.0.1
 	 */
-	FileStream(const system::Path& path, Mode mode = READ | WRITE);
+	FileStream(const os::Path& path, Mode mode = READ | WRITE);
 
 	/**
 	 * FileStream destructor
@@ -89,15 +89,15 @@ public:
 	 *
 	 * @since 0.0.1
 	 */
-	system::IFileHandle::Handle getHandle() const;
+	os::IFileHandle::Handle getHandle() const;
 
 private:
 	/**
 	 * @since 0.0.1
 	 */
-	system::IFileHandle::Handle handle_;
+	os::IFileHandle::Handle handle_;
 };
 
 }}
 
-#endif // HEADER_wilcot_io_FileStream
+#endif // _HEADER_wilcot_io_FileStream

@@ -3,14 +3,14 @@
  * @license MIT
  */
 
-#ifndef HEADER_wilcot_system_Path
-#define HEADER_wilcot_system_Path
+#ifndef _HEADER_wilcot_os_Path
+#define _HEADER_wilcot_os_Path
 
 #include <wilcot/Object.h>
 
 #include <string>
 
-namespace wilcot { namespace system {
+namespace wilcot { namespace os {
 
 /**
  * Class Path
@@ -177,4 +177,4 @@ private:
 
 }}
 
-#endif // HEADER_wilcot_system_Path
+#endif // _HEADER_wilcot_os_Path

@@ -8,8 +8,8 @@
 
 #include <wilcot/Object.h>
 
-#include <wilcot/system/Path.h>
-#include <wilcot/system/IFileHandle.h>
+#include <wilcot/os/Path.h>
+#include <wilcot/os/IFileHandle.h>
 
 #include <string>
 #include <vector>
@@ -23,7 +23,7 @@ namespace wilcot { namespace guard {
  */
 class Container : public Object {
 private:
-	typedef std::pair<system::Path, system::Path> PathPair_;
+	typedef std::pair<os::Path, os::Path> PathPair_;
 	typedef std::pair<PathPair_, bool> BindMount_;
 
 public:
@@ -48,7 +48,7 @@ public:
 	 *
 	 * @since 0.0.1
 	 */
-	const system::Path& getProgram() const;
+	const os::Path& getProgram() const;
 
 	/**
 	 * Set path to executable
@@ -58,7 +58,7 @@ public:
 	 *
 	 * @since 0.0.1
 	 */
-	Container& setProgram(const system::Path& program);
+	Container& setProgram(const os::Path& program);
 
 	/**
 	 * Get execution arguments
@@ -86,7 +86,7 @@ public:
 	 *
 	 * @since 0.0.1
 	 */
-	const system::Path& getWorkingDirectory() const;
+	const os::Path& getWorkingDirectory() const;
 
 	/**
 	 * Set working directory
@@ -96,7 +96,7 @@ public:
 	 *
 	 * @since 0.0.1
 	 */
-	Container& setWorkingDirectory(const system::Path& directory);
+	Container& setWorkingDirectory(const os::Path& directory);
 
 	/**
 	 * Set standard input
@@ -106,7 +106,7 @@ public:
 	 *
 	 * @since 0.0.1
 	 */
-	Container& setStandardInput(system::IFileHandle& inputHandle);
+	Container& setStandardInput(os::IFileHandle& inputHandle);
 
 	/**
 	 * Set standard output
@@ -116,7 +116,7 @@ public:
 	 *
 	 * @since 0.0.1
 	 */
-	Container& setStandardOutput(system::IFileHandle& outputHandle);
+	Container& setStandardOutput(os::IFileHandle& outputHandle);
 
 	/**
 	 * Set standard error
@@ -126,7 +126,7 @@ public:
 	 *
 	 * @since 0.0.1
 	 */
-	Container& setStandardError(system::IFileHandle& outputHandle);
+	Container& setStandardError(os::IFileHandle& outputHandle);
 
 	/**
 	 * Add bind mount
@@ -138,8 +138,7 @@ public:
 	 * @since 0.0.1
 	 */
 	Container& addBindMount(
-		const system::Path& source,
-		const system::Path& target,
+		const os::Path& source, const os::Path& target,
 		bool readOnly = false);
 
 	/**
@@ -181,7 +180,7 @@ private:
 	/**
 	 * @since 0.0.1
 	 */
-	system::Path program_;
+	os::Path program_;
 
 	/**
 	 * @since 0.0.1
@@ -191,7 +190,7 @@ private:
 	/**
 	 * @since 0.0.1
 	 */
-	system::Path workingDirectory_;
+	os::Path workingDirectory_;
 
 	/**
 	 * @since 0.0.1

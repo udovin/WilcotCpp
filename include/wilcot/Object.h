@@ -3,10 +3,10 @@
  * @license MIT
  */
 
-#ifndef HEADER_wilcot_Object
-#define HEADER_wilcot_Object
+#ifndef _HEADER_wilcot_Object
+#define _HEADER_wilcot_Object
 
-#include <wilcot/system/detect.h>
+#include <wilcot/os/detect.h>
 
 namespace wilcot {
 
@@ -27,4 +27,4 @@ public:
 
 }
 
-#endif // HEADER_wilcot_Object
+#endif // _HEADER_wilcot_Object
