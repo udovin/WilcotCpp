@@ -35,7 +35,8 @@ std::size_t Buffer::read(void* buffer, std::size_t count) {
 				static_cast<char*>(buffer) + suffix,
 				begin_,
 				prefix);
-			start_ = begin_ + (prefix - 1);
+			start_ = begin_ + prefix;
+			finish_++;
 		}
 	}
 
