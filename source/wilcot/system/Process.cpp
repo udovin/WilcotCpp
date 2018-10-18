@@ -6,9 +6,9 @@
 #include <wilcot/system/Process.h>
 
 #ifdef WILCOT_SYSTEM_LINUX
-#	include <wait.h>
 #	include <unistd.h>
 #	include <signal.h>
+#	include <sys/wait.h>
 #endif
 
 #include <stdexcept>

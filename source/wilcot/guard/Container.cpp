@@ -9,10 +9,10 @@
 #include <wilcot/io/FileStream.h>
 
 #ifdef WILCOT_SYSTEM_LINUX
-#	include <wait.h>
 #	include <unistd.h>
 #	include <signal.h>
 #	include <fcntl.h>
+#	include <sys/wait.h>
 #	include <sys/mount.h>
 #	include <sys/stat.h>
 #	include <cstring>
