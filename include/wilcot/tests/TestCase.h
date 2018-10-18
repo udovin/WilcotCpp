@@ -15,7 +15,7 @@ private:
 
 		ITest_(const std::string& name) : name(name) {}
 
-		virtual ~ITest_() {};
+		virtual ~ITest_() {}
 
 		virtual void invoke() const = 0;
 	};
@@ -23,10 +23,9 @@ private:
 	template<class T>
 	struct Test_ : public ITest_ {
 		T* object;
-
 		void (T::*method)();
 
-		Test_(const std::string& name, T* object, void (T::*method)())
+		Test_(T* object, void (T::*method)(), const std::string& name)
 			: ITest_(name), object(object), method(method) {}
 
 		void invoke() const {
@@ -34,7 +33,13 @@ private:
 		}
 	};
 
-	struct Assert_ {};
+	struct Failure_ {
+		std::string code;
+		std::size_t line;
+
+		Failure_(const std::string& code, std::size_t line)
+			: code(code), line(line) {}
+	};
 
 	std::vector<ITest_*> tests_;
 
@@ -46,19 +51,33 @@ public:
 protected:
 	TestCase();
 
-	template<class T>
-	void addTest(const std::string& name, void (T::*method)()) {
-		tests_.push_back(
-			new Test_<T>(name, dynamic_cast<T*>(this), method));
-	}
-
 	virtual void setUp();
 
 	virtual void tearDown();
 
-	void assert(bool result);
+	template<class T>
+	void addTest__(void (T::*method)(), const std::string& name) {
+		tests_.push_back(
+			new Test_<T>(dynamic_cast<T*>(this), method, name)
+		);
+	}
+
+	void assert__(bool result, const std::string& code, std::size_t line);
 };
 
 }}
+
+#define ADD_TEST_CASE(Class) \
+	int main(int argc, char* argv[]) { \
+		Class().run(); \
+		return 0; \
+	} \
+	class Main__ {}
+
+#define ADD_TEST(Class, method) \
+	addTest__(&Class::method, #method)
+
+#define ASSERT(expression) \
+	assert__(expression, #expression, __LINE__)
 
 #endif // _HEADER_wilcot_tests_TestCase

@@ -14,11 +14,8 @@ public:
 	}
 
 	ContainerTestCase() {
-		addTest("testCreateContainer", &ContainerTestCase::testCreateContainer);
+		ADD_TEST(ContainerTestCase, testCreateContainer);
 	}
 };
 
-int main(int argc, char* argv[]) {
-	ContainerTestCase().run();
-	return 0;
-}
+ADD_TEST_CASE(ContainerTestCase);

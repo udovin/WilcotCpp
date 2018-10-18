@@ -16,7 +16,7 @@ public:
 		process.start();
 		process.wait();
 
-		assert(process.getExitCode() != 0);
+		ASSERT(process.getExitCode() != 0);
 	}
 
 	void testBinLs() {
@@ -31,7 +31,7 @@ public:
 		process.start();
 		process.wait();
 
-		assert(process.getExitCode() == 0);
+		ASSERT(process.getExitCode() == 0);
 	}
 
 	void testBinLsWorkDir() {
@@ -47,17 +47,14 @@ public:
 		process.start();
 		process.wait();
 
-		assert(process.getExitCode() == 0);
+		ASSERT(process.getExitCode() == 0);
 	}
 
 	ProcessTestCase() {
-		addTest("testDevNull", &ProcessTestCase::testDevNull);
-		addTest("testBinLs", &ProcessTestCase::testBinLs);
-		addTest("testBinLsWorkDir", &ProcessTestCase::testBinLsWorkDir);
+		ADD_TEST(ProcessTestCase, testDevNull);
+		ADD_TEST(ProcessTestCase, testBinLs);
+		ADD_TEST(ProcessTestCase, testBinLsWorkDir);
 	}
 };
 
-int main(int argc, char* argv[]) {
-	ProcessTestCase().run();
-	return 0;
-}
+ADD_TEST_CASE(ProcessTestCase);
