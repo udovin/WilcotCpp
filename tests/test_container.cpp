@@ -3,16 +3,19 @@
  * @license MIT
  */
 
-#include <cassert>
-#include <cstdlib>
+#include <wilcot/tests/TestCase.h>
 
 #include <wilcot/guard/Container.h>
 
-int main(int argc, char* argv[]) {
-	wilcot::guard::Container container;
+class ContainerTestCase : public wilcot::tests::TestCase {
+public:
+	void testCreateContainer() {
+		wilcot::guard::Container container;
+	}
 
-//	container.start();
-//	container.wait();
+	ContainerTestCase() {
+		ADD_TEST(ContainerTestCase, testCreateContainer);
+	}
+};
 
-	return EXIT_SUCCESS;
-}
+ADD_TEST_CASE(ContainerTestCase);
