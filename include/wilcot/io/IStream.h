@@ -20,6 +20,13 @@ namespace wilcot { namespace io {
 class IStream {
 public:
 	/**
+	 * Empty destructor
+	 *
+	 * @since 0.0.1
+	 */
+	virtual ~IStream() = 0;
+
+	/**
 	 * Read bytes from stream
 	 *
 	 * @param buffer
