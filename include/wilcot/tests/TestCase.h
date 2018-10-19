@@ -1,3 +1,8 @@
+/**
+ * @author Ivan Udovin
+ * @license MIT
+ */
+
 #ifndef HEADER_wilcot_tests_TestCase
 #define HEADER_wilcot_tests_TestCase
 

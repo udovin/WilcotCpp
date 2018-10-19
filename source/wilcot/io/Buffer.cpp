@@ -1,3 +1,8 @@
+/**
+ * @author Ivan Udovin
+ * @license MIT
+ */
+
 #include <wilcot/io/Buffer.h>
 
 #include <algorithm>

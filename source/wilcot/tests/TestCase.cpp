@@ -1,3 +1,8 @@
+/**
+ * @author Ivan Udovin
+ * @license MIT
+ */
+
 #include <wilcot/tests/TestCase.h>
 
 #include <sstream>
