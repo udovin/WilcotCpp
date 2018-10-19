@@ -27,11 +27,25 @@ public:
 	Buffer(std::size_t size);
 
 	/**
+	 * Buffer copy constructor
+	 *
+	 * @since 0.0.1
+	 */
+	Buffer(const Buffer& other);
+
+	/**
 	 * Buffer destructor
 	 * 
 	 * @since 0.0.1
 	 */
 	~Buffer();
+
+	/**
+	 * Buffer assign operator
+	 *
+	 * @since 0.0.1
+	 */
+	Buffer& operator=(const Buffer& other);
 
 	/**
 	 * Read bytes from buffer
@@ -66,17 +80,24 @@ public:
 
 	/**
 	 * @return
+	 *
+	 * @since 0.0.1
+	 */
+	std::size_t maxSize() const;
+
+	/**
+	 * @return
 	 * 
 	 * @since 0.0.1 
 	 */
-	std::size_t getMaxReadSize() const;
+	std::size_t size() const;
 
 	/**
 	 * @return
 	 * 
 	 * @since 0.0.1
 	 */
-	std::size_t getMaxWriteSize() const;
+	std::size_t capacity() const;
 
 private:
 	/**

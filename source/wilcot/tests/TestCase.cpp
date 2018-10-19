@@ -49,9 +49,9 @@ TestCase& TestCase::run() {
 
 	for (std::size_t i = 0; i < failures.size(); i++) {
 		std::stringstream ss;
-		ss << "Test '" << tests_[i]->name << "':" << std::endl;
-		ss << std::setw(6) << failures[i].line << ": ";
-		ss << failures[i].code << std::endl;
+		ss << "Test '" << tests_[i]->name_ << "':" << std::endl;
+		ss << std::setw(6) << failures[i].line_ << ": ";
+		ss << failures[i].code_ << std::endl;
 		std::string message(ss.str());
 		write(oldStdout, message.c_str(), message.size());
 	}
@@ -65,7 +65,7 @@ void TestCase::setUp() {}
 
 void TestCase::tearDown() {}
 
-void TestCase::assert__(
+void TestCase::assert_(
 	bool result, const std::string& code, std::size_t line) {
 	if (!result) {
 		throw Failure_(code, line);

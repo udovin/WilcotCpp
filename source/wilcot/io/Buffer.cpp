@@ -12,12 +12,29 @@ Buffer::Buffer(std::size_t size)
 	start_ = finish_ = begin_;
 }
 
+Buffer::Buffer(const Buffer& other)
+	: begin_(NULL), end_(NULL), start_(NULL), finish_(NULL) {
+	begin_ = new char[other.maxSize()];
+	end_ = begin_ + other.maxSize();
+	start_ = finish_ = begin_;
+	// Copy buffer data ...
+}
+
 Buffer::~Buffer() {
 	delete[] begin_;
 }
 
+Buffer& Buffer::operator=(const Buffer& other) {
+	if (maxSize() < other.maxSize()) {
+		// Resize buffer ...
+	}
+	// Copy buffer data ...
+
+	return *this;
+}
+
 std::size_t Buffer::read(void* buffer, std::size_t count) {
-	count = std::min(count, getMaxReadSize());
+	count = std::min(count, size());
 	if (start_ <= finish_) {
 		memcpy(buffer, start_, count);
 		start_ += count;
@@ -44,7 +61,7 @@ std::size_t Buffer::read(void* buffer, std::size_t count) {
 }
 
 std::size_t Buffer::write(const void* buffer, std::size_t count) {
-	count = std::min(count, getMaxWriteSize());
+	count = std::min(count, capacity());
 	if (start_ > finish_) {
 		memcpy(finish_ + 1, buffer, count);
 		finish_ += count;
@@ -75,7 +92,11 @@ Buffer& Buffer::clear() {
 	return *this;
 }
 
-std::size_t Buffer::getMaxReadSize() const {
+std::size_t Buffer::maxSize() const {
+	return static_cast<std::size_t>(end_ - begin_);
+}
+
+std::size_t Buffer::size() const {
 	if (start_ <= finish_) {
 		return finish_ - start_;
 	} else {
@@ -83,7 +104,7 @@ std::size_t Buffer::getMaxReadSize() const {
 	}
 }
 
-std::size_t Buffer::getMaxWriteSize() const {
+std::size_t Buffer::capacity() const {
 	if (start_ <= finish_) {
 		return (end_ - finish_) + (start_ - begin_);
 	} else {

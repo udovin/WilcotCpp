@@ -9,7 +9,10 @@ BUILD_DIRECTORY := .build
 
 # Compiler settings
 COMPILER := g++
-COMPILE_FLAGS := -I$(INCLUDE_DIRECTORY) --std=c++03 -Wall -pedantic
+COMPILE_FLAGS := \
+	-I$(INCLUDE_DIRECTORY) --std=c++03 -pedantic -pedantic-errors -Wall \
+	-Wextra -Werror -Wconversion -Weffc++ -Wduplicated-cond -Wduplicated-branches \
+	-Wlogical-op -Wnull-dereference -Wold-style-cast -Wuseless-cast -Wshadow
 
 # Recursive find by pattern
 find = $(foreach file, $(wildcard $1/*), $(filter $2, $(file)) $(call find, $(file), $2))
