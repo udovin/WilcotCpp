@@ -3,8 +3,8 @@
  * @license MIT
  */
 
-#ifndef _HEADER_wilcot_io_FileStream
-#define _HEADER_wilcot_io_FileStream
+#ifndef HEADER_wilcot_io_FileStream
+#define HEADER_wilcot_io_FileStream
 
 #include <wilcot/Object.h>
 #include <wilcot/io/IStream.h>
@@ -100,4 +100,4 @@ private:
 
 }}
 
-#endif // _HEADER_wilcot_io_FileStream
+#endif // HEADER_wilcot_io_FileStream

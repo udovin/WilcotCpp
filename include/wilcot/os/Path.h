@@ -3,8 +3,8 @@
  * @license MIT
  */
 
-#ifndef _HEADER_wilcot_os_Path
-#define _HEADER_wilcot_os_Path
+#ifndef HEADER_wilcot_os_Path
+#define HEADER_wilcot_os_Path
 
 #include <wilcot/Object.h>
 
@@ -177,4 +177,4 @@ private:
 
 }}
 
-#endif // _HEADER_wilcot_os_Path
+#endif // HEADER_wilcot_os_Path

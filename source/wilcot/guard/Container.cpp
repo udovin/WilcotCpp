@@ -6,6 +6,7 @@
 #include <wilcot/guard/Container.h>
 
 #include <wilcot/os/Path.h>
+#include <wilcot/os/File.h>
 #include <wilcot/io/FileStream.h>
 
 #ifdef WILCOT_OS_LINUX
@@ -29,20 +30,12 @@
 namespace wilcot { namespace guard {
 
 #ifdef WILCOT_OS_LINUX
-static const std::size_t STACK_SIZE__ = 1048576;
+static const std::size_t STACK_SIZE_ = 1048576;
 
-static void createDirectory__(const os::Path& path) {
-	mkdir(path, 0777);
-}
-
-static void createFile__(const os::Path& path) {
-	close(open(path, O_WRONLY | O_CREAT | O_TRUNC, 0644));
-}
-
-static std::string getRandomString__(std::size_t length) {
+static std::string getRandomString_(std::size_t length) {
 	std::stringstream ss;
 
-	srand(time(NULL));
+	srand(static_cast<unsigned int>(time(NULL)));
 	for (std::size_t i = 0; i < length; i++) {
 		ss << "0123456789abcdef"[rand() % 16];
 	}
@@ -50,7 +43,7 @@ static std::string getRandomString__(std::size_t length) {
 	return ss.str();
 }
 
-int pivotRoot__(const char* oldRoot, const char* newRoot) {
+long pivotRoot_(const char* oldRoot, const char* newRoot) {
 	return syscall(SYS_pivot_root, oldRoot, newRoot);
 }
 
@@ -137,12 +130,12 @@ Container& Container::start() {
 	}
 
 	// Child process needs separate stack.
-	char *stack = new char[STACK_SIZE__];
+	char *stack = new char[STACK_SIZE_];
 
 	// Trying to clone current container.
 	handle_ = clone(
 		Container::entryPoint_,
-		static_cast<void *>(stack + STACK_SIZE__),
+		static_cast<void *>(stack + STACK_SIZE_),
 		CLONE_NEWUSER | CLONE_NEWNS | CLONE_NEWNET | CLONE_NEWUTS
 			| CLONE_NEWIPC | CLONE_NEWPID | SIGCHLD,
 		static_cast<void *>(this));
@@ -220,7 +213,7 @@ int Container::entryPoint_() {
 
 		execv(program_, arguments);
 
-		delete [] arguments;
+		delete[] arguments;
 
 		return EXIT_FAILURE;
 	} catch (std::exception& exception) {
@@ -306,8 +299,8 @@ void Container::setupMountNamespace_() {
 	os::Path newRoot = "/tmp/container";
 	os::Path oldRoot = "/.OldRoot";
 
-	createDirectory__(newRoot);
-	createDirectory__(newRoot + oldRoot);
+	os::File::create(newRoot, os::File::TYPE_DIRECTORY);
+	os::File::create(newRoot + oldRoot, os::File::TYPE_DIRECTORY);
 
 	std::vector<BindMount_>::const_iterator it;
 
@@ -334,7 +327,7 @@ void Container::setupMountNamespace_() {
 		throw std::runtime_error("Failed to remount new root");
 	}
 
-	if (pivotRoot__(newRoot, newRoot + oldRoot) != 0) {
+	if (pivotRoot_(newRoot, newRoot + oldRoot) != 0) {
 		throw std::runtime_error("Failed to pivot root");
 	}
 
@@ -354,7 +347,7 @@ void Container::setupNetworkNamespace_() {}
 
 void Container::setupUtsNamespace_() {
 #ifdef WILCOT_OS_LINUX
-	std::string hostname = getRandomString__(16);
+	std::string hostname = getRandomString_(16);
 	if (sethostname(hostname.c_str(), hostname.size()) != 0) {
 		throw std::runtime_error("Unable to set hostname.");
 	}

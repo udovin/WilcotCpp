@@ -3,8 +3,8 @@
  * @license MIT
  */
 
-#ifndef _HEADER_wilcot_os_IFileHandle
-#define _HEADER_wilcot_os_IFileHandle
+#ifndef HEADER_wilcot_os_IFileHandle
+#define HEADER_wilcot_os_IFileHandle
 
 #include <wilcot/os/detect.h>
 
@@ -36,6 +36,13 @@ public:
 	static const Handle INVALID_VALUE;
 
 	/**
+	 * Empty destructor
+	 *
+	 * @since 0.0.1
+	 */
+	virtual ~IFileHandle() = 0;
+
+	/**
 	 * Get system handle
 	 *
 	 * @return
@@ -47,4 +54,4 @@ public:
 
 }}
 
-#endif // _HEADER_wilcot_os_IFileHandle
+#endif // HEADER_wilcot_os_IFileHandle

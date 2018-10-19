@@ -3,8 +3,8 @@
  * @license MIT
  */
 
-#ifndef _HEADER_wilcot_os_Process
-#define _HEADER_wilcot_os_Process
+#ifndef HEADER_wilcot_os_Process
+#define HEADER_wilcot_os_Process
 
 #include <wilcot/Object.h>
 
@@ -222,4 +222,4 @@ private:
 
 }}
 
-#endif // _HEADER_wilcot_os_Process
+#endif // HEADER_wilcot_os_Process

@@ -151,7 +151,7 @@ int Process::entryPoint_() {
 
 	execv(program_, arguments);
 
-	delete [] arguments;
+	delete[] arguments;
 #endif
 
 	// Return failure code when execution failed

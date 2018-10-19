@@ -3,8 +3,8 @@
  * @license MIT
  */
 
-#ifndef _HEADER_wilcot_io_IStream
-#define _HEADER_wilcot_io_IStream
+#ifndef HEADER_wilcot_io_IStream
+#define HEADER_wilcot_io_IStream
 
 #include <wilcot/os/detect.h>
 
@@ -58,4 +58,4 @@ public:
 
 }}
 
-#endif // _HEADER_wilcot_io_IStream
+#endif // HEADER_wilcot_io_IStream

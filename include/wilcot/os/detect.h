@@ -3,8 +3,8 @@
  * @license MIT
  */
 
-#ifndef _HEADER_wilcot_os_detect
-#define _HEADER_wilcot_os_detect
+#ifndef HEADER_wilcot_os_detect
+#define HEADER_wilcot_os_detect
 
 #if defined(__linux__)
 #	define WILCOT_OS_LINUX
@@ -12,4 +12,4 @@
 #	define WILCOT_OS_WINDOWS
 #endif
 
-#endif // _HEADER_wilcot_os_detect
+#endif // HEADER_wilcot_os_detect

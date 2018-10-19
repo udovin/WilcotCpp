@@ -11,7 +11,7 @@ BUILD_DIRECTORY := .build
 COMPILER := g++
 COMPILE_FLAGS := \
 	-I$(INCLUDE_DIRECTORY) --std=c++03 -pedantic -pedantic-errors -Wall \
-	-Wextra -Werror -Wconversion -Weffc++ -Wduplicated-cond -Wduplicated-branches \
+	-Wextra -Werror -Wconversion -Weffc++ -Wduplicated-cond \
 	-Wlogical-op -Wnull-dereference -Wold-style-cast -Wuseless-cast -Wshadow
 
 # Recursive find by pattern

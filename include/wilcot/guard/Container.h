@@ -3,8 +3,8 @@
  * @license MIT
  */
 
-#ifndef _HEADER_wilcot_guard_Container
-#define _HEADER_wilcot_guard_Container
+#ifndef HEADER_wilcot_guard_Container
+#define HEADER_wilcot_guard_Container
 
 #include <wilcot/Object.h>
 
@@ -298,4 +298,4 @@ private:
 
 }}
 
-#endif // _HEADER_wilcot_guard_Container
+#endif // HEADER_wilcot_guard_Container

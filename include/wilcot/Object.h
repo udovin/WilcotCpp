@@ -3,8 +3,8 @@
  * @license MIT
  */
 
-#ifndef _HEADER_wilcot_Object
-#define _HEADER_wilcot_Object
+#ifndef HEADER_wilcot_Object
+#define HEADER_wilcot_Object
 
 #include <wilcot/os/detect.h>
 
@@ -27,4 +27,4 @@ public:
 
 }
 
-#endif // _HEADER_wilcot_Object
+#endif // HEADER_wilcot_Object

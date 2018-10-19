@@ -13,4 +13,6 @@ const IFileHandle::Handle IFileHandle::INVALID_VALUE = INVALID_HANDLE_VALUE;
 const IFileHandle::Handle IFileHandle::INVALID_VALUE = -1;
 #endif
 
+IFileHandle::~IFileHandle() {}
+
 }}
