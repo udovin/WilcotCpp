@@ -17,7 +17,18 @@ Buffer::Buffer(const Buffer& other)
 	begin_ = new char[other.maxSize()];
 	end_ = begin_ + other.maxSize();
 	start_ = finish_ = begin_;
-	// Copy buffer data ...
+
+	if (other.start_ > other.finish_) {
+		if (other.start_ < other.end_) {
+			memcpy(finish_, other.start_, other.end_ - other.start_);
+			finish_ += other.end_ - other.start_;
+		}
+		memcpy(finish_, other.begin_, other.finish_ - other.begin_ + 1);
+		finish_ += other.finish_ - other.begin_ + 1;
+	} else {
+		memcpy(finish_, other.start_, other.size());
+		finish_ += other.size();
+	}
 }
 
 Buffer::~Buffer() {
@@ -26,9 +37,24 @@ Buffer::~Buffer() {
 
 Buffer& Buffer::operator=(const Buffer& other) {
 	if (maxSize() < other.maxSize()) {
-		// Resize buffer ...
+		char* newBegin_ = new char[other.maxSize()];
+		delete[] begin_;
+		begin_ =  newBegin_;
+		end_ = begin_ + other.maxSize();
 	}
-	// Copy buffer data ...
+	start_ = finish_ = begin_;
+
+	if (other.start_ > other.finish_) {
+		if (other.start_ < other.end_) {
+			memcpy(finish_, other.start_, other.end_ - other.start_);
+			finish_ += other.end_ - other.start_;
+		}
+		memcpy(finish_, other.begin_, other.finish_ - other.begin_ + 1);
+		finish_ += other.finish_ - other.begin_ + 1;
+	} else {
+		memcpy(finish_, other.start_, other.size());
+		finish_ += other.size();
+	}
 
 	return *this;
 }
@@ -110,6 +136,15 @@ std::size_t Buffer::capacity() const {
 	} else {
 		return (start_ - finish_) - 1;
 	}
+}
+
+bool Buffer::empty() const {
+	return start_ == finish_;
+}
+
+bool Buffer::full() const {
+	return (start_ == begin_ && finish_ == end_)
+		|| finish_ + 1 == start_;
 }
 
 }}

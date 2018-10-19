@@ -25,6 +25,16 @@ public:
 		ASSERT(buffer.size() == 0);
 		ASSERT(buffer.capacity() == 10);
 		ASSERT(buffer.size() + buffer.capacity() == buffer.maxSize());
+		ASSERT(buffer.empty());
+		ASSERT(!buffer.full());
+
+		wilcot::io::Buffer zeroBuffer;
+
+		ASSERT(zeroBuffer.maxSize() == 0);
+		ASSERT(zeroBuffer.capacity() == 0);
+		ASSERT(zeroBuffer.size() == 0);
+		ASSERT(zeroBuffer.empty());
+		ASSERT(zeroBuffer.full());
 	}
 
 	void testReadFromEmpty() {
@@ -37,14 +47,21 @@ public:
 		wilcot::io::Buffer buffer(10);
 
 		ASSERT(buffer.write(data, 10) == 10);
+		ASSERT(buffer.capacity() == 0);
+		ASSERT(buffer.size() == 10);
+		ASSERT(!buffer.empty());
+		ASSERT(buffer.full());
 	}
 
 	void testReadWrite() {
 		wilcot::io::Buffer buffer(255);
 
 		ASSERT(buffer.write(test, testSize) == testSize);
+		ASSERT(!buffer.empty());
+		ASSERT(!buffer.full());
 		ASSERT(buffer.read(data, testSize) == testSize);
 		ASSERT(memcmp(data, test, testSize + 1) == 0);
+		ASSERT(buffer.empty());
 	}
 
 	void testTryOverflow() {
@@ -52,8 +69,10 @@ public:
 
 		for (int i = 0; i < 5; i++) {
 			ASSERT(buffer.write(test, testSize) == testSize);
+			ASSERT(!buffer.full());
 		}
 		ASSERT(buffer.write(test, testSize) == testSize / 3);
+		ASSERT(buffer.full());
 	}
 
 	void testRingReadWrite() {
@@ -63,11 +82,14 @@ public:
 		buffer.write(test, ringPart);
 		for (std::size_t i = 0; i < 3; i++) {
 			buffer.write(test + ringPart * (i + 1), ringPart);
+			ASSERT(buffer.full());
 			buffer.read(data, ringPart);
 			ASSERT(memcmp(data, test + ringPart * i, ringPart) == 0);
+			ASSERT(!buffer.full());
 		}
 		buffer.read(data, ringPart);
 		ASSERT(memcmp(data, test + ringPart * 3, ringPart) == 0);
+		ASSERT(!buffer.full());
 	}
 
 	void testRandomReadWrite() {
@@ -90,6 +112,66 @@ public:
 		}
 	}
 
+	void testCopyRingReadWrite() {
+		std::size_t ringPart = testSize / 4;
+		wilcot::io::Buffer buffer(ringPart * 2);
+
+		buffer.write(test, ringPart);
+		for (std::size_t i = 0; i < 3; i++) {
+			buffer.write(test + ringPart * (i + 1), ringPart);
+			wilcot::io::Buffer copyBuffer(buffer);
+			buffer.read(data, ringPart);
+			ASSERT(memcmp(data, test + ringPart * i, ringPart) == 0);
+			memset(data, 0, ringPart);
+			copyBuffer.read(data, ringPart);
+			ASSERT(memcmp(data, test + ringPart * i, ringPart) == 0);
+		}
+		wilcot::io::Buffer copyBuffer(buffer);
+		buffer.read(data, ringPart);
+		ASSERT(memcmp(data, test + ringPart * 3, ringPart) == 0);
+		memset(data, 0, ringPart);
+		copyBuffer.read(data, ringPart);
+		ASSERT(memcmp(data, test + ringPart * 3, ringPart) == 0);
+
+		ASSERT(buffer.maxSize() <= copyBuffer.maxSize());
+	}
+
+	void testAssignRingReadWrite() {
+		std::size_t ringPart = testSize / 4;
+		wilcot::io::Buffer buffer(ringPart * 2);
+		wilcot::io::Buffer copyBuffer;
+
+		buffer.write(test, ringPart);
+		for (std::size_t i = 0; i < 3; i++) {
+			buffer.write(test + ringPart * (i + 1), ringPart);
+			copyBuffer = buffer;
+			buffer.read(data, ringPart);
+			ASSERT(memcmp(data, test + ringPart * i, ringPart) == 0);
+			memset(data, 0, ringPart);
+			copyBuffer.read(data, ringPart);
+			ASSERT(memcmp(data, test + ringPart * i, ringPart) == 0);
+		}
+		copyBuffer = buffer;
+		buffer.read(data, ringPart);
+		ASSERT(memcmp(data, test + ringPart * 3, ringPart) == 0);
+		memset(data, 0, ringPart);
+		copyBuffer.read(data, ringPart);
+		ASSERT(memcmp(data, test + ringPart * 3, ringPart) == 0);
+
+		ASSERT(buffer.maxSize() <= copyBuffer.maxSize());
+	}
+
+	void testCopySize() {
+		wilcot::io::Buffer buffer;
+
+		buffer = wilcot::io::Buffer(10);
+		ASSERT(buffer.maxSize() == 10);
+		buffer = wilcot::io::Buffer(20);
+		ASSERT(buffer.maxSize() == 20);
+		buffer = wilcot::io::Buffer(10);
+		ASSERT(buffer.maxSize() == 20);
+	}
+
 	BufferTestCase() : testSize() {
 		ADD_TEST(BufferTestCase, testCreate);
 		ADD_TEST(BufferTestCase, testReadFromEmpty);
@@ -98,6 +180,9 @@ public:
 		ADD_TEST(BufferTestCase, testTryOverflow);
 		ADD_TEST(BufferTestCase, testRingReadWrite);
 		ADD_TEST(BufferTestCase, testRandomReadWrite);
+		ADD_TEST(BufferTestCase, testCopyRingReadWrite);
+		ADD_TEST(BufferTestCase, testAssignRingReadWrite);
+		ADD_TEST(BufferTestCase, testCopySize);
 
 		strcpy(test, "KtgECWnxbRMY4vajwbVeuoX5HgI3tzWS");
 		testSize = strlen(test);

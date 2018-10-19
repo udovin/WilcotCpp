@@ -23,7 +23,7 @@ TestCase& TestCase::run() {
 	dup2(STDOUT_FILENO, oldStdout);
 	dup2(newStdout, STDOUT_FILENO);
 
-	std::vector<Failure_> failures;
+	std::vector<std::pair<std::string, Failure_> > failures;
 
 	for (std::size_t i = 0; i < tests_.size(); i++) {
 		if ((i + 1) % 60 == 0) {
@@ -37,7 +37,9 @@ TestCase& TestCase::run() {
 			write(oldStdout, ".", 1);
 		} catch (const Failure_& failure) {
 			write(oldStdout, "F", 1);
-			failures.push_back(failure);
+			failures.push_back(
+				std::make_pair(tests_[i]->name_, failure)
+			);
 		} catch (const std::exception& exception) {
 			write(oldStdout, "E", 1);
 		}
@@ -49,9 +51,9 @@ TestCase& TestCase::run() {
 
 	for (std::size_t i = 0; i < failures.size(); i++) {
 		std::stringstream ss;
-		ss << "Test '" << tests_[i]->name_ << "':" << std::endl;
-		ss << std::setw(6) << failures[i].line_ << ": ";
-		ss << failures[i].code_ << std::endl;
+		ss << "Test '" << failures[i].first << "':" << std::endl;
+		ss << std::setw(6) << failures[i].second.line_ << ": ";
+		ss << failures[i].second.code_ << std::endl;
 		std::string message(ss.str());
 		write(oldStdout, message.c_str(), message.size());
 	}

@@ -24,7 +24,7 @@ public:
 	 *
 	 * @since 0.0.1
 	 */
-	Buffer(std::size_t size);
+	Buffer(std::size_t size = 0);
 
 	/**
 	 * Buffer copy constructor
@@ -98,6 +98,20 @@ public:
 	 * @since 0.0.1
 	 */
 	std::size_t capacity() const;
+
+	/**
+	 * @return
+	 *
+	 * @since 0.0.1
+	 */
+	bool empty() const;
+
+	/**
+	 * @return
+	 *
+	 * @since 0.0.1
+	 */
+	bool full() const;
 
 private:
 	/**
