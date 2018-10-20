@@ -89,6 +89,15 @@ public:
 	Path getAbsolute() const;
 
 	/**
+	 * Get parent path
+	 *
+	 * @return
+	 *
+	 * @since 0.0.1
+	 */
+	Path getParent() const;
+
+	/**
 	 * @param other
 	 * @return
 	 *
