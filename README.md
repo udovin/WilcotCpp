@@ -4,7 +4,11 @@ Wilcot Cpp — a C++ library that helps in developing Linux applications.
 
 ## What's supported?
 
- * Process creation
+ * Process creation;
+ * Linux container creation;
+ * Convenient testing utils;
+ * Convenient working with filesystem;
+ * Streams and ring buffer.
 
 ## Examples
 
@@ -12,7 +16,7 @@ Wilcot Cpp — a C++ library that helps in developing Linux applications.
 
 ```cpp
 // Create new process instance
-wilcot::system::Process process;
+wilcot::os::Process process;
 
 // Create an array for arguments
 std::vector<std::string> arguments;
