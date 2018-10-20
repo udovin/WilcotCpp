@@ -29,6 +29,7 @@ TestCase& TestCase::run() {
 	dup2(newStdout, STDOUT_FILENO);
 
 	std::vector<std::pair<std::string, Failure_> > failures;
+	std::vector<std::pair<std::string, std::string> > exceptions;
 
 	for (std::size_t i = 0; i < tests_.size(); i++) {
 		if ((i + 1) % 60 == 0) {
@@ -47,6 +48,9 @@ TestCase& TestCase::run() {
 			);
 		} catch (const std::exception& exception) {
 			write(oldStdout, "E", 1);
+			exceptions.push_back(
+				std::make_pair(tests_[i]->name_, exception.what())
+			);
 		}
 
 		tearDown();
@@ -59,6 +63,14 @@ TestCase& TestCase::run() {
 		ss << "Test '" << failures[i].first << "':" << std::endl;
 		ss << std::setw(6) << failures[i].second.line_ << ": ";
 		ss << failures[i].second.code_ << std::endl;
+		std::string message(ss.str());
+		write(oldStdout, message.c_str(), message.size());
+	}
+
+	for (std::size_t i = 0; i < exceptions.size(); i++) {
+		std::stringstream ss;
+		ss << "Test '" << exceptions[i].first << "':" << std::endl;
+		ss << "What: " << exceptions[i].second << std::endl;
 		std::string message(ss.str());
 		write(oldStdout, message.c_str(), message.size());
 	}

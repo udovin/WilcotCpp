@@ -11,7 +11,6 @@
 #include <sys/stat.h>
 #include <cstdio>
 #include <stdexcept>
-#include <iostream>
 
 namespace wilcot { namespace os {
 
@@ -115,7 +114,6 @@ void removeDirectory(const Path& path) {
 	}
 
 	if (remove(path) < 0) {
-		std::cerr << path << std::endl;
 		throw std::runtime_error("Failed to remove directory");
 	}
 }

@@ -9,7 +9,6 @@
 #include <wilcot/os/Path.h>
 
 #include <algorithm>
-#include <iostream>
 
 class FileTestCase : public wilcot::tests::TestCase {
 public:

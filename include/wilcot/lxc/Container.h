@@ -30,9 +30,11 @@ public:
 	/**
 	 * Container constructor
 	 *
+	 * @param path
+	 *
 	 * @since 0.0.1
 	 */
-	Container();
+	Container(const os::Path& path);
 
 	/**
 	 * Container destructor
@@ -172,6 +174,11 @@ public:
 	Container& wait();
 
 private:
+	/**
+	 * @since 0.0.1
+	 */
+	os::Path path_;
+
 	/**
 	 * @since 0.0.1
 	 */

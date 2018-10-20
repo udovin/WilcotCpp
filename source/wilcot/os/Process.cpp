@@ -101,7 +101,7 @@ Process& Process::start() {
 
 	// Failed to clone current process
 	if (handle_ == -1) {
-		throw std::runtime_error("Unable to start process.");
+		throw std::runtime_error("Unable to start process");
 	}
 
 	return *this;

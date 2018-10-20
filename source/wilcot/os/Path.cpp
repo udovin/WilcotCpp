@@ -36,16 +36,13 @@ Path Path::getAbsolute() const {
 Path Path::getParent() const {
 	std::size_t i;
 
-	for (i = 0; i < path_.size(); i++) {
-		if (path_[i] == '/') {
+	for (i = path_.size(); i > 0; i--) {
+		if (path_[i - 1] == '/') {
 			break;
 		}
 	}
-	if (i == 0 || i == path_.size()) {
-		return Path();
-	}
 
-	return Path(path_.substr(0, i));
+	return Path(path_.substr(0, i > 0 ? i - 1 : 0));
 }
 
 Path& Path::operator+=(const Path& other) {

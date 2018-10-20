@@ -5,4 +5,4 @@ docker build -t wilcotcpp-make \
 	--build-arg GROUP_ID=$(id -g) \
 	--quiet docker >/dev/null
 
-docker run --rm --cap-add SYS_ADMIN -v "$(realpath .)":/app wilcotcpp-make $1
+docker run --rm --privileged -v "$(realpath .)":/app wilcotcpp-make $1

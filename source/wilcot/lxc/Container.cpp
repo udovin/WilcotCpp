@@ -48,14 +48,13 @@ long pivotRoot_(const char* oldRoot, const char* newRoot) {
 
 #endif
 
-Container::Container()
-	: handle_(-1), program_(), arguments_()
+Container::Container(const os::Path& path)
+	: path_(path), handle_(-1), program_(), arguments_()
 	, workingDirectory_("/")
 	, standardInputHandle_(STDIN_FILENO)
 	, standardOutputHandle_(STDOUT_FILENO)
 	, standardErrorHandle_(STDERR_FILENO)
-	, bindMounts_()
-	, exitCode_(0) {}
+	, bindMounts_(), exitCode_(0) {}
 
 Container::~Container() {
 	stop();
@@ -215,7 +214,7 @@ int Container::entryPoint_() {
 		delete[] arguments;
 
 		return EXIT_FAILURE;
-	} catch (std::exception& exception) {
+	} catch (const std::exception& exception) {
 		return EXIT_FAILURE;
 	}
 }
@@ -283,7 +282,7 @@ void Container::setupUserNamespace_() {
 
 	// We should wait for setup of user namespace from parent.
 	if (read(pipe_[0], &c, 1) != 0) {
-		throw std::runtime_error("Failed to wait pipe close.");
+		throw std::runtime_error("Failed to wait pipe close");
 	}
 #endif
 }
@@ -295,35 +294,38 @@ void Container::setupMountNamespace_() {
 		throw std::runtime_error("Failed to remount root as private");
 	}
 
-	os::Path newRoot = "/tmp/container";
-	os::Path oldRoot = "/.OldRoot";
+	os::Path newRoot = path_ / "rootfs";
+	os::Path oldRoot = "/.oldroot";
 
-	os::createDirectory(newRoot);
-	os::createDirectory(newRoot + oldRoot);
+	os::createDirectories(newRoot + oldRoot);
+
+	if (mount(newRoot, newRoot, NULL, MS_BIND | MS_PRIVATE, NULL) == -1) {
+		throw std::runtime_error("Failed to remount new root");
+	}
 
 	std::vector<BindMount_>::const_iterator it;
 
 	// Mount all rw and ro mounts of files and directories.
 	for (it = bindMounts_.begin(); it != bindMounts_.end(); it++) {
 		os::Path source = it->first.first;
-		os::Path target = newRoot / it->first.second;
-		if (mount(source, target, NULL, MS_BIND | MS_PRIVATE, NULL) == -1) {
-			throw std::runtime_error("Unable to mount directory");
-		}
-	}
+		os::Path target = newRoot + it->first.second;
 
-	// Remount read-only mounts.
-	for (it = bindMounts_.begin(); it != bindMounts_.end(); it++) {
+		if (wilcot::os::isFile(source)) {
+			wilcot::os::createDirectories(target.getParent());
+			wilcot::os::createFile(target);
+		} else if (wilcot::os::isDirectory(source)) {
+			wilcot::os::createDirectories(target);
+		}
+
+		long flags = MS_BIND | MS_PRIVATE;
+
 		if (it->second) {
-			os::Path target = newRoot / it->first.second;
-			if (mount(target, target, NULL, MS_REMOUNT | MS_RDONLY, NULL) == -1) {
-				throw std::runtime_error("Unable to mount directory");
-			}
+			flags = flags | MS_RDONLY;
 		}
-	}
 
-	if (mount(newRoot, newRoot, NULL, MS_BIND | MS_PRIVATE, NULL) == -1) {
-		throw std::runtime_error("Failed to remount new root");
+		if (mount(source, target, NULL, flags, NULL) == -1) {
+			throw std::runtime_error("Unable to create bind mount");
+		}
 	}
 
 	if (pivotRoot_(newRoot, newRoot + oldRoot) != 0) {
@@ -334,7 +336,7 @@ void Container::setupMountNamespace_() {
 		throw std::runtime_error("Failed to unmount old root");
 	}
 
-	rmdir(oldRoot);
+	os::removeDirectory(oldRoot);
 
 	if (chdir(workingDirectory_) != 0) {
 		throw std::runtime_error("Failed to change working directory");
@@ -348,7 +350,7 @@ void Container::setupUtsNamespace_() {
 #ifdef WILCOT_OS_LINUX
 	std::string hostname = getRandomString_(16);
 	if (sethostname(hostname.c_str(), hostname.size()) != 0) {
-		throw std::runtime_error("Unable to set hostname.");
+		throw std::runtime_error("Unable to set hostname");
 	}
 #endif
 }
