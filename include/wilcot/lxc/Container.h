@@ -3,8 +3,8 @@
  * @license MIT
  */
 
-#ifndef HEADER_wilcot_guard_Container
-#define HEADER_wilcot_guard_Container
+#ifndef HEADER_wilcot_lxc_Container
+#define HEADER_wilcot_lxc_Container
 
 #include <wilcot/Object.h>
 
@@ -14,7 +14,7 @@
 #include <string>
 #include <vector>
 
-namespace wilcot { namespace guard {
+namespace wilcot { namespace lxc {
 
 /**
  * Class Container
@@ -298,4 +298,4 @@ private:
 
 }}
 
-#endif // HEADER_wilcot_guard_Container
+#endif // HEADER_wilcot_lxc_Container

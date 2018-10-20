@@ -3,10 +3,9 @@
  * @license MIT
  */
 
-#include <wilcot/guard/Container.h>
+#include <wilcot/lxc/Container.h>
 
-#include <wilcot/os/Path.h>
-#include <wilcot/os/File.h>
+#include <wilcot/os/files.h>
 #include <wilcot/io/FileStream.h>
 
 #ifdef WILCOT_OS_LINUX
@@ -27,7 +26,7 @@
 #include <cstring>
 #include <ctime>
 
-namespace wilcot { namespace guard {
+namespace wilcot { namespace lxc {
 
 #ifdef WILCOT_OS_LINUX
 static const std::size_t STACK_SIZE_ = 1048576;
@@ -299,8 +298,8 @@ void Container::setupMountNamespace_() {
 	os::Path newRoot = "/tmp/container";
 	os::Path oldRoot = "/.OldRoot";
 
-	os::File::create(newRoot, os::File::TYPE_DIRECTORY);
-	os::File::create(newRoot + oldRoot, os::File::TYPE_DIRECTORY);
+	os::createDirectory(newRoot);
+	os::createDirectory(newRoot + oldRoot);
 
 	std::vector<BindMount_>::const_iterator it;
 

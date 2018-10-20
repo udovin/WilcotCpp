@@ -5,12 +5,12 @@
 
 #include <wilcot/tests/TestCase.h>
 
-#include <wilcot/guard/Container.h>
+#include <wilcot/lxc/Container.h>
 
 class ContainerTestCase : public wilcot::tests::TestCase {
 public:
 	void testCreateContainer() {
-		wilcot::guard::Container container;
+		wilcot::lxc::Container container;
 	}
 
 	ContainerTestCase() {
