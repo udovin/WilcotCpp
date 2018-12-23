@@ -4,7 +4,6 @@
  */
 
 #include <wilcot/tests/TestCase.h>
-
 #include <wilcot/io/Buffer.h>
 #include <vector>
 #include <cstring>

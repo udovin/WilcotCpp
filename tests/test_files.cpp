@@ -4,10 +4,8 @@
  */
 
 #include <wilcot/tests/TestCase.h>
-
 #include <wilcot/os/files.h>
 #include <wilcot/os/Path.h>
-
 #include <algorithm>
 
 class FileTestCase : public wilcot::tests::TestCase {

@@ -4,7 +4,6 @@
  */
 
 #include <wilcot/tests/TestCase.h>
-
 #include <wilcot/lxc/Container.h>
 #include <wilcot/os/files.h>
 

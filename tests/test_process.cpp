@@ -4,7 +4,6 @@
  */
 
 #include <wilcot/tests/TestCase.h>
-
 #include <wilcot/os/Process.h>
 
 class ProcessTestCase : public wilcot::tests::TestCase {
