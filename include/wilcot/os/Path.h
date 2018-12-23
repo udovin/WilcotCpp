@@ -7,7 +7,6 @@
 #define HEADER_wilcot_os_Path
 
 #include <wilcot/Object.h>
-
 #include <string>
 
 namespace wilcot { namespace os {

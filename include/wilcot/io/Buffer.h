@@ -7,7 +7,6 @@
 #define HEADER_wilcot_io_Buffer
 
 #include <wilcot/Object.h>
-
 #include <cstddef>
 
 namespace wilcot { namespace io {

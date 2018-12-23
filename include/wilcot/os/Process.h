@@ -6,11 +6,8 @@
 #ifndef HEADER_wilcot_os_Process
 #define HEADER_wilcot_os_Process
 
-#include <wilcot/Object.h>
-
 #include <wilcot/os/Path.h>
 #include <wilcot/os/IFileHandle.h>
-
 #include <vector>
 
 namespace wilcot { namespace os {

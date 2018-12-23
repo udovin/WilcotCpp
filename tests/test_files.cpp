@@ -41,19 +41,14 @@ public:
 
 	void testListDirectory() {
 		wilcot::os::createDirectory(tempPath);
-
 		ASSERT(wilcot::os::listDirectory(tempPath).empty());
-
 		wilcot::os::createFile(tempPath / "test_file");
 		wilcot::os::createDirectory(tempPath / "test_directory");
-
 		std::vector<wilcot::os::Path> list;
 		list.push_back("test_file");
 		list.push_back("test_directory");
-
 		std::vector<wilcot::os::Path> children
 			= wilcot::os::listDirectory(tempPath);
-
 		for (std::size_t i = 0; i < children.size(); i++) {
 			std::vector<wilcot::os::Path>::const_iterator it
 				= std::find(list.begin(), list.end(), children[i]);

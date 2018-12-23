@@ -6,7 +6,7 @@
 #ifndef HEADER_wilcot_os_IFileHandle
 #define HEADER_wilcot_os_IFileHandle
 
-#include <wilcot/os/detect.h>
+#include <wilcot/base.h>
 
 namespace wilcot { namespace os {
 

@@ -6,11 +6,8 @@
 #ifndef HEADER_wilcot_lxc_Container
 #define HEADER_wilcot_lxc_Container
 
-#include <wilcot/Object.h>
-
 #include <wilcot/os/Path.h>
 #include <wilcot/os/IFileHandle.h>
-
 #include <string>
 #include <vector>
 

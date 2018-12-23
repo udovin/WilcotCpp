@@ -4,7 +4,6 @@
  */
 
 #include <wilcot/io/FileStream.h>
-
 #include <unistd.h>
 #include <fcntl.h>
 
@@ -21,17 +20,14 @@ const FileStream::Mode FileStream::WRITE = 2;
 FileStream::FileStream(const os::Path& path, Mode mode)
 	: handle_(os::IFileHandle::INVALID_VALUE) {
 	int flags = 0;
-
 	if ((mode & READ) == READ) {
 		flags |= O_RDONLY;
 	}
-
 	if ((mode & WRITE) == WRITE) {
 		// For more convenient usage we can implicitly add
 		// flags for creating and clearing the file.
 		flags |= O_WRONLY | O_CREAT | O_TRUNC;
 	}
-
 	handle_ = ::open(path, flags);
 }
 
@@ -52,7 +48,6 @@ IStream& FileStream::close() {
 		::close(handle_);
 		handle_ = os::IFileHandle::INVALID_VALUE;
 	}
-
 	return *this;
 }
 

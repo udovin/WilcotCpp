@@ -6,10 +6,8 @@
 #ifndef HEADER_wilcot_io_FileStream
 #define HEADER_wilcot_io_FileStream
 
-#include <wilcot/Object.h>
 #include <wilcot/io/IStream.h>
 #include <wilcot/os/IFileHandle.h>
-
 #include <wilcot/os/Path.h>
 
 namespace wilcot { namespace io {

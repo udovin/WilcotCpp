@@ -35,8 +35,12 @@ build: $(LIBRARY_FILE)
 tests: $(BINARY_TESTS)
 
 clean:
-	@echo "[RM] '$(BUILD_DIRECTORY)', '$(LIBRARY_FILE)'"
-	@rm -rf "$(BUILD_DIRECTORY)" "$(LIBRARY_FILE)"
+	@echo "[RM] '$(BUILD_DIRECTORY)'"
+	@rm -rf "$(BUILD_DIRECTORY)"
+
+reset: clean
+	@echo "[RM] '$(LIBRARY_FILE)'"
+	@rm -rf "$(LIBRARY_FILE)"
 
 $(LIBRARY_FILE): $(OBJECT_FILES)
 	@echo "[AR] '$@'"

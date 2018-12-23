@@ -21,15 +21,12 @@ public:
 
 	void testCreate() {
 		wilcot::io::Buffer buffer(10);
-
 		ASSERT(buffer.size() == 0);
 		ASSERT(buffer.capacity() == 10);
 		ASSERT(buffer.size() + buffer.capacity() == buffer.maxSize());
 		ASSERT(buffer.empty());
 		ASSERT(!buffer.full());
-
 		wilcot::io::Buffer zeroBuffer;
-
 		ASSERT(zeroBuffer.maxSize() == 0);
 		ASSERT(zeroBuffer.capacity() == 0);
 		ASSERT(zeroBuffer.size() == 0);
@@ -39,13 +36,11 @@ public:
 
 	void testReadFromEmpty() {
 		wilcot::io::Buffer buffer(10);
-
 		ASSERT(buffer.read(data, 10) == 0);
 	}
 
 	void testWriteToEmpty() {
 		wilcot::io::Buffer buffer(10);
-
 		ASSERT(buffer.write(data, 10) == 10);
 		ASSERT(buffer.capacity() == 0);
 		ASSERT(buffer.size() == 10);
@@ -55,7 +50,6 @@ public:
 
 	void testReadWrite() {
 		wilcot::io::Buffer buffer(255);
-
 		ASSERT(buffer.write(test, testSize) == testSize);
 		ASSERT(!buffer.empty());
 		ASSERT(!buffer.full());
@@ -66,7 +60,6 @@ public:
 
 	void testTryOverflow() {
 		wilcot::io::Buffer buffer(testSize * 5 + testSize / 3);
-
 		for (int i = 0; i < 5; i++) {
 			ASSERT(buffer.write(test, testSize) == testSize);
 			ASSERT(!buffer.full());
@@ -78,7 +71,6 @@ public:
 	void testRingReadWrite() {
 		std::size_t ringPart = testSize / 4;
 		wilcot::io::Buffer buffer(ringPart * 2);
-
 		buffer.write(test, ringPart);
 		for (std::size_t i = 0; i < 3; i++) {
 			buffer.write(test + ringPart * (i + 1), ringPart);
@@ -115,7 +107,6 @@ public:
 	void testCopyRingReadWrite() {
 		std::size_t ringPart = testSize / 4;
 		wilcot::io::Buffer buffer(ringPart * 2);
-
 		buffer.write(test, ringPart);
 		for (std::size_t i = 0; i < 3; i++) {
 			buffer.write(test + ringPart * (i + 1), ringPart);
@@ -132,7 +123,6 @@ public:
 		memset(data, 0, ringPart);
 		copyBuffer.read(data, ringPart);
 		ASSERT(memcmp(data, test + ringPart * 3, ringPart) == 0);
-
 		ASSERT(buffer.maxSize() <= copyBuffer.maxSize());
 	}
 
@@ -140,7 +130,6 @@ public:
 		std::size_t ringPart = testSize / 4;
 		wilcot::io::Buffer buffer(ringPart * 2);
 		wilcot::io::Buffer copyBuffer;
-
 		buffer.write(test, ringPart);
 		for (std::size_t i = 0; i < 3; i++) {
 			buffer.write(test + ringPart * (i + 1), ringPart);
@@ -157,13 +146,11 @@ public:
 		memset(data, 0, ringPart);
 		copyBuffer.read(data, ringPart);
 		ASSERT(memcmp(data, test + ringPart * 3, ringPart) == 0);
-
 		ASSERT(buffer.maxSize() <= copyBuffer.maxSize());
 	}
 
 	void testCopySize() {
 		wilcot::io::Buffer buffer;
-
 		buffer = wilcot::io::Buffer(10);
 		ASSERT(buffer.maxSize() == 10);
 		buffer = wilcot::io::Buffer(20);
@@ -183,7 +170,6 @@ public:
 		ADD_TEST(BufferTestCase, testCopyRingReadWrite);
 		ADD_TEST(BufferTestCase, testAssignRingReadWrite);
 		ADD_TEST(BufferTestCase, testCopySize);
-
 		strcpy(test, "KtgECWnxbRMY4vajwbVeuoX5HgI3tzWS");
 		testSize = strlen(test);
 	}

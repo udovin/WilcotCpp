@@ -4,10 +4,8 @@
  */
 
 #include <wilcot/lxc/Container.h>
-
 #include <wilcot/os/files.h>
 #include <wilcot/io/FileStream.h>
-
 #ifdef WILCOT_OS_LINUX
 #	include <unistd.h>
 #	include <signal.h>
@@ -18,7 +16,6 @@
 #	include <sys/syscall.h>
 #	include <cstring>
 #endif
-
 #include <stdexcept>
 #include <sstream>
 #include <cstdlib>
@@ -31,7 +28,7 @@ namespace wilcot { namespace lxc {
 #ifdef WILCOT_OS_LINUX
 static const std::size_t STACK_SIZE_ = 1048576;
 
-static std::string getRandomString_(std::size_t length) {
+static std::string getRandomString__(std::size_t length) {
 	std::stringstream ss;
 
 	srand(static_cast<unsigned int>(time(NULL)));
@@ -42,7 +39,7 @@ static std::string getRandomString_(std::size_t length) {
 	return ss.str();
 }
 
-long pivotRoot_(const char* oldRoot, const char* newRoot) {
+long pivotRoot__(const char* oldRoot, const char* newRoot) {
 	return syscall(SYS_pivot_root, oldRoot, newRoot);
 }
 
@@ -77,7 +74,6 @@ const std::vector<std::string>& Container::getArguments() const {
 Container& Container::setArguments(
 	const std::vector<std::string>& arguments) {
 	arguments_ = arguments;
-
 	return *this;
 }
 
@@ -87,25 +83,21 @@ const os::Path& Container::getWorkingDirectory() const {
 
 Container& Container::setWorkingDirectory(const os::Path& directory) {
 	workingDirectory_ = directory;
-
 	return *this;
 }
 
 Container& Container::setStandardInput(os::IFileHandle& inputHandle) {
 	standardInputHandle_ = inputHandle.getHandle();
-
 	return *this;
 }
 
 Container& Container::setStandardOutput(os::IFileHandle& outputHandle) {
 	standardOutputHandle_ = outputHandle.getHandle();
-
 	return *this;
 }
 
 Container& Container::setStandardError(os::IFileHandle& outputHandle) {
 	standardErrorHandle_ = outputHandle.getHandle();
-
 	return *this;
 }
 
@@ -113,7 +105,6 @@ Container& Container::addBindMount(
 	const os::Path& source, const os::Path& target, bool readOnly) {
 	bindMounts_.push_back(
 		std::make_pair(std::make_pair(source, target), readOnly));
-
 	return *this;
 }
 
@@ -126,10 +117,8 @@ Container& Container::start() {
 	if (pipe(pipe_) == -1) {
 		throw std::runtime_error("Unable to create pipe.");
 	}
-
 	// Child process needs separate stack.
 	char *stack = new char[STACK_SIZE_];
-
 	// Trying to clone current container.
 	handle_ = clone(
 		Container::entryPoint_,
@@ -137,26 +126,20 @@ Container& Container::start() {
 		CLONE_NEWUSER | CLONE_NEWNS | CLONE_NEWNET | CLONE_NEWUTS
 			| CLONE_NEWIPC | CLONE_NEWPID | SIGCHLD,
 		static_cast<void *>(this));
-
 	delete[] stack;
-
 	close(pipe_[0]);
 #endif
-
 	// Failed to clone current container.
 	if (handle_ == -1) {
 #ifdef WILCOT_OS_LINUX
 		close(pipe_[1]);
 #endif
-
 		throw std::runtime_error("Unable to start container.");
 	}
-
 #ifdef WILCOT_OS_LINUX
 	prepareUserNamespace_();
 	setupNamespaceHandles_();
 #endif
-
 	return *this;
 }
 
@@ -164,18 +147,15 @@ Container& Container::stop() {
 #ifdef WILCOT_OS_LINUX
 	kill(handle_, SIGKILL);
 #endif
-
 	return *this;
 }
 
 Container& Container::wait() {
 #ifdef WILCOT_OS_LINUX
 	int status;
-
 	waitpid(handle_, &status, 0);
 	exitCode_ = WEXITSTATUS(status);
 #endif
-
 	return *this;
 }
 
@@ -187,7 +167,6 @@ int Container::entryPoint_() {
 #ifdef WILCOT_OS_LINUX
 	close(pipe_[1]);
 #endif
-
 	try {
 		setupUserNamespace_();
 		// Now we should initialize mount namespace.
@@ -195,24 +174,17 @@ int Container::entryPoint_() {
 		setupNetworkNamespace_();
 		setupUtsNamespace_();
 		setupIpcNamespace_();
-
 		dup2(standardInputHandle_, STDIN_FILENO);
 		dup2(standardOutputHandle_, STDOUT_FILENO);
 		dup2(standardErrorHandle_, STDERR_FILENO);
-
 		// Convert string arguments to raw char arguments
 		char** arguments = new char*[arguments_.size() + 1];
-
 		for (std::size_t i = 0; i < arguments_.size(); i++) {
 			arguments[i] = const_cast<char*>(arguments_[i].c_str());
 		}
-
 		arguments[arguments_.size()] = NULL;
-
 		execv(program_, arguments);
-
 		delete[] arguments;
-
 		return EXIT_FAILURE;
 	} catch (const std::exception& exception) {
 		return EXIT_FAILURE;
@@ -223,33 +195,26 @@ void Container::prepareUserNamespace_() {
 #ifdef WILCOT_OS_LINUX
 	int fd;
 	char path[40], data[256];
-
 	// Our process user has overflow UID and the same GID.
 	// We can not directly change UID to 0 before making mapping.
 	sprintf(path, "/proc/%d/uid_map", handle_);
 	sprintf(data, "%d %d %d\n", 0, getuid(), 1);
-
 	fd = open(path, O_WRONLY | O_TRUNC);
 	write(fd, data, strlen(data));
 	close(fd);
-
 	// Before making groups mapping we should write "deny" into
 	// "/proc/$PID/setgroups".
 	sprintf(path, "/proc/%d/setgroups", handle_);
 	sprintf(data, "deny\n");
-
 	fd = open(path, O_WRONLY | O_TRUNC);
 	write(fd, data, strlen(data));
 	close(fd);
-
 	// Now we can easily make mapping for groups.
 	sprintf(path, "/proc/%d/gid_map", handle_);
 	sprintf(data, "%d %d %d\n", 0, getgid(), 1);
-
 	fd = open(path, O_WRONLY | O_TRUNC);
 	write(fd, data, strlen(data));
 	close(fd);
-
 	// Now we should unlock child process.
 	close(pipe_[1]);
 #endif
@@ -268,7 +233,6 @@ static const char* NAMESPACE_FILES__[5] = {
 void Container::setupNamespaceHandles_() {
 #ifdef WILCOT_OS_LINUX
 	char path[40];
-
 	for (int i = 0; i < 5; i++) {
 		sprintf(path, NAMESPACE_FILES__[i], handle_);
 		namespaceHandles_[i] = open(path, O_RDONLY);
@@ -279,7 +243,6 @@ void Container::setupNamespaceHandles_() {
 void Container::setupUserNamespace_() {
 #ifdef WILCOT_OS_LINUX
 	char c;
-
 	// We should wait for setup of user namespace from parent.
 	if (read(pipe_[0], &c, 1) != 0) {
 		throw std::runtime_error("Failed to wait pipe close");
@@ -293,51 +256,38 @@ void Container::setupMountNamespace_() {
 	if (mount("/", "/", NULL, MS_REC | MS_PRIVATE, NULL) == -1) {
 		throw std::runtime_error("Failed to remount root as private");
 	}
-
 	os::Path newRoot = path_ / "rootfs";
 	os::Path oldRoot = "/.oldroot";
-
 	os::createDirectories(newRoot + oldRoot);
-
 	if (mount(newRoot, newRoot, NULL, MS_BIND | MS_PRIVATE, NULL) == -1) {
 		throw std::runtime_error("Failed to remount new root");
 	}
-
 	std::vector<BindMount_>::const_iterator it;
-
 	// Mount all rw and ro mounts of files and directories.
 	for (it = bindMounts_.begin(); it != bindMounts_.end(); it++) {
 		os::Path source = it->first.first;
 		os::Path target = newRoot + it->first.second;
-
 		if (wilcot::os::isFile(source)) {
 			wilcot::os::createDirectories(target.getParent());
 			wilcot::os::createFile(target);
 		} else if (wilcot::os::isDirectory(source)) {
 			wilcot::os::createDirectories(target);
 		}
-
 		long flags = MS_BIND | MS_PRIVATE;
-
 		if (it->second) {
 			flags = flags | MS_RDONLY;
 		}
-
 		if (mount(source, target, NULL, flags, NULL) == -1) {
 			throw std::runtime_error("Unable to create bind mount");
 		}
 	}
-
-	if (pivotRoot_(newRoot, newRoot + oldRoot) != 0) {
+	if (pivotRoot__(newRoot, newRoot + oldRoot) != 0) {
 		throw std::runtime_error("Failed to pivot root");
 	}
-
 	if (umount2(oldRoot, MNT_DETACH)) {
 		throw std::runtime_error("Failed to unmount old root");
 	}
-
 	os::removeDirectory(oldRoot);
-
 	if (chdir(workingDirectory_) != 0) {
 		throw std::runtime_error("Failed to change working directory");
 	}
@@ -348,7 +298,7 @@ void Container::setupNetworkNamespace_() {}
 
 void Container::setupUtsNamespace_() {
 #ifdef WILCOT_OS_LINUX
-	std::string hostname = getRandomString_(16);
+	std::string hostname = getRandomString__(16);
 	if (sethostname(hostname.c_str(), hostname.size()) != 0) {
 		throw std::runtime_error("Unable to set hostname");
 	}

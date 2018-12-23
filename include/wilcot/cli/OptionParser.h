@@ -6,7 +6,6 @@
 #ifndef HEADER_wilcot_cli_OptionParser
 #define HEADER_wilcot_cli_OptionParser
 
-#include <wilcot/Object.h>
 #include <wilcot/cli/Option.h>
 #include <vector>
 #include <string>

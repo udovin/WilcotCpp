@@ -6,7 +6,7 @@
 #ifndef HEADER_wilcot_Object
 #define HEADER_wilcot_Object
 
-#include <wilcot/os/detect.h>
+#include <wilcot/base.h>
 
 namespace wilcot {
 

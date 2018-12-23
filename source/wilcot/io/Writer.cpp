@@ -19,7 +19,6 @@ static inline void writeChar__(Writer& writer, char c) {
 
 Writer& operator<<(Writer& writer, char c) {
 	writeChar__(writer, c);
-
 	return writer;
 }
 
@@ -27,7 +26,6 @@ Writer& operator<<(Writer& writer, const std::string& s) {
 	for (std::size_t i = 0; i < s.size(); i++) {
 		writeChar__(writer, s[i]);
 	}
-
 	return writer;
 }
 

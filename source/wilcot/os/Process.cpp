@@ -38,7 +38,6 @@ const Path& Process::getProgram() const {
 
 Process& Process::setProgram(const Path& program) {
 	program_ = program;
-
 	return *this;
 }
 
@@ -48,7 +47,6 @@ const std::vector<std::string>& Process::getArguments() const {
 
 Process& Process::setArguments(const std::vector<std::string>& arguments) {
 	arguments_ = arguments;
-
 	return *this;
 }
 
@@ -58,25 +56,21 @@ const Path& Process::getWorkingDirectory() const {
 
 Process& Process::setWorkingDirectory(const Path& directory) {
 	workingDirectory_ = directory;
-
 	return *this;
 }
 
 Process& Process::setStandardInput(IFileHandle& inputHandle) {
 	standardInputHandle_ = inputHandle.getHandle();
-
 	return *this;
 }
 
 Process& Process::setStandardOutput(IFileHandle& outputHandle) {
 	standardOutputHandle_ = outputHandle.getHandle();
-
 	return *this;
 }
 
 Process& Process::setStandardError(IFileHandle& outputHandle) {
 	standardErrorHandle_ = outputHandle.getHandle();
-
 	return *this;
 }
 
@@ -88,22 +82,18 @@ Process& Process::start() {
 #ifdef WILCOT_OS_LINUX
 	// Child process needs separate stack
 	char *stack = new char[STACK_SIZE__];
-
 	// Trying to clone current process
 	handle_ = clone(
 		Process::entryPoint_,
 		static_cast<void *>(stack + STACK_SIZE__),
 		SIGCHLD,
 		static_cast<void *>(this));
-
 	delete[] stack;
 #endif
-
 	// Failed to clone current process
 	if (handle_ == -1) {
 		throw std::runtime_error("Unable to start process");
 	}
-
 	return *this;
 }
 
@@ -111,18 +101,15 @@ Process& Process::stop() {
 #ifdef WILCOT_OS_LINUX
 	kill(handle_, SIGKILL);
 #endif
-
 	return *this;
 }
 
 Process& Process::wait() {
 #ifdef WILCOT_OS_LINUX
 	int status;
-
 	waitpid(handle_, &status, 0);
 	exitCode_ = WEXITSTATUS(status);
 #endif
-
 	return *this;
 }
 
@@ -135,25 +122,18 @@ int Process::entryPoint_() {
 	dup2(standardInputHandle_, STDIN_FILENO);
 	dup2(standardOutputHandle_, STDOUT_FILENO);
 	dup2(standardErrorHandle_, STDERR_FILENO);
-
 	if (chdir(workingDirectory_) != 0) {
 		return EXIT_FAILURE;
 	}
-
 	// Convert string arguments to raw char arguments
 	char** arguments = new char*[arguments_.size() + 1];
-
 	for (std::size_t i = 0; i < arguments_.size(); i++) {
 		arguments[i] = const_cast<char*>(arguments_[i].c_str());
 	}
-
 	arguments[arguments_.size()] = NULL;
-
 	execv(program_, arguments);
-
 	delete[] arguments;
 #endif
-
 	// Return failure code when execution failed
 	return EXIT_FAILURE;
 }

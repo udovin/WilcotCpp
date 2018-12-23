@@ -21,10 +21,8 @@ public:
 	void testBinLs() {
 		wilcot::lxc::Container container(tempPath);
 		std::vector<std::string> arguments;
-
 		arguments.push_back("/bin/ls");
 		arguments.push_back("-al");
-
 		container.setProgram("/bin/ls");
 		container.setArguments(arguments);
 		container.addBindMount("/bin", "/bin", true);
@@ -32,10 +30,8 @@ public:
 		if (wilcot::os::pathExists("/lib64")) {
 			container.addBindMount("/lib64", "/lib64", true);
 		}
-
 		container.start();
 		container.wait();
-
 		ASSERT(container.getExitCode() == 0);
 	}
 

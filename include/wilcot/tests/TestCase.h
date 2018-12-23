@@ -7,7 +7,6 @@
 #define HEADER_wilcot_tests_TestCase
 
 #include <wilcot/Object.h>
-
 #include <string>
 #include <vector>
 

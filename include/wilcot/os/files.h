@@ -6,10 +6,7 @@
 #ifndef HEADER_wilcot_os_files
 #define HEADER_wilcot_os_files
 
-#include <wilcot/Object.h>
-
 #include <wilcot/os/Path.h>
-
 #include <vector>
 
 namespace wilcot { namespace os {

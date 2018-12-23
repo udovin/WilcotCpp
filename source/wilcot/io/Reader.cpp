@@ -25,19 +25,15 @@ Reader& operator>>(Reader& reader, char& c) {
 
 Reader& operator>>(Reader& reader, std::string& s) {
 	char c;
-
 	do {
 		readChar__(reader, c);
 	} while (c == ' ' || c == '\n' || c == '\r');
-
 	s.push_back(c);
 	readChar__(reader, c);
-
 	while (c != ' ' && c != '\n' && c != '\r') {
 		s.push_back(c);
 		readChar__(reader, c);
 	}
-
 	return reader;
 }
 

@@ -13,7 +13,6 @@ Path::Path(const Path& other) : path_(other.path_) {}
 
 Path& Path::operator=(const Path& other) {
 	path_ = other.path_;
-
 	return *this;
 }
 
@@ -35,25 +34,21 @@ Path Path::getAbsolute() const {
 
 Path Path::getParent() const {
 	std::size_t i;
-
 	for (i = path_.size(); i > 0; i--) {
 		if (path_[i - 1] == '/') {
 			break;
 		}
 	}
-
 	return Path(path_.substr(0, i > 0 ? i - 1 : 0));
 }
 
 Path& Path::operator+=(const Path& other) {
 	path_ += other.path_;
-
 	return *this;
 }
 
 Path& Path::operator/=(const Path& other) {
 	path_ += '/' + other.path_;
-
 	return *this;
 }
 
