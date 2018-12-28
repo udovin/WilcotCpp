@@ -30,8 +30,28 @@ std::string OptionParser::getHelp() const {
 }
 
 void OptionParser::parse(int argc, const char* argv[]) {
-	WILCOT_UNUSED(argv);
-	for (int i = 1; i < argc; i++) {}
+	for (size_t i = 0; i < options_.size(); i++) {
+		if (options_[i].getArgument() != NULL) {
+			options_[i].getArgument()->clear();
+		}
+	}
+	for (int i = 1; i < argc; i++) {
+		std::map<std::string, size_t>::const_iterator it(
+			optionMap_.find(argv[i])
+		);
+		if (it != optionMap_.end()) {
+			Option& option = options_[it->second];
+			if (option.getArgument() != NULL) {
+				IArgument& argument = *option.getArgument();
+				while (i + 1 < argc && argument.write(argv[i + 1])) {
+					i++;
+				}
+				argument.flush();
+			}
+		} else {
+			throw std::exception();
+		}
+	}
 }
 
 std::string OptionParser::getOptionHelp_() const {
