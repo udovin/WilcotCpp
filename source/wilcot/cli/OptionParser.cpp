@@ -60,11 +60,17 @@ std::string OptionParser::getOptionHelp_() const {
 	size_t maxLength = 0;
 	for (size_t i = 0; i < options_.size(); i++) {
 		const std::vector<std::string>& names = options_[i].getNames();
+		const IArgument* argument = options_[i].getArgument();
 		for (size_t j = 0; j < names.size(); j++) {
 			if (j > 0) {
 				ss << ", ";
 			}
 			ss << names[j];
+			if (argument != NULL) {
+				if (!argument->getName().empty()) {
+					ss << ' ' << argument->getName();
+				}
+			}
 		}
 		options.push_back(ss.str());
 		if (maxLength < options[options.size() - 1].size()) {

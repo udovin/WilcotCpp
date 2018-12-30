@@ -8,22 +8,27 @@
 
 namespace wilcot { namespace cli {
 
-template<class T>
-Argument<T>::Argument(bool required)
-	: required_(required), value_(), empty_(true) {}
+template<class ValueType>
+Argument<ValueType>::Argument(const std::string& name, bool required)
+	: name_(name), required_(required), value_(), empty_(true) {}
 
-template<class T>
-Argument<T>::operator const T&() const {
+template<class ValueType>
+std::string Argument<ValueType>::getName() const {
+	return name_;
+}
+
+template<class ValueType>
+Argument<ValueType>::operator const ValueType&() const {
 	return value_;
 }
 
-template<class T>
-bool Argument<T>::write(const std::string& value) {
+template<class ValueType>
+bool Argument<ValueType>::write(const std::string& argument) {
 	if (!empty_) {
 		return false;
 	}
 	std::stringstream ss;
-	ss << value;
+	ss << argument;
 	if (!(ss >> value_)) {
 		if (required_) {
 			throw std::exception();
@@ -45,16 +50,16 @@ bool Argument<std::string>::write(const std::string& value) {
 	return true;
 }
 
-template<class T>
-void Argument<T>::flush() {
+template<class ValueType>
+void Argument<ValueType>::flush() {
 	if (empty_) {
 		throw std::exception();
 	}
 }
 
-template<class T>
-void Argument<T>::clear() {
-	value_ = T();
+template<class ValueType>
+void Argument<ValueType>::clear() {
+	value_ = ValueType();
 	empty_ = true;
 }
 

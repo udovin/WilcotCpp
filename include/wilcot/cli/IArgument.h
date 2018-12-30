@@ -16,8 +16,10 @@ class IArgument {
 public:
 	virtual ~IArgument() = 0;
 
+	virtual std::string getName() const = 0;
+
 protected:
-	virtual bool write(const std::string& value) = 0;
+	virtual bool write(const std::string& argument) = 0;
 
 	virtual void flush() = 0;
 

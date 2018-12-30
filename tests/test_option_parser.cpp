@@ -6,6 +6,7 @@
 #include <wilcot/tests/TestCase.h>
 #include <wilcot/cli/OptionParser.h>
 #include <wilcot/cli/Argument.h>
+#include <wilcot/cli/FlagArgument.h>
 #include <string>
 
 class OptionParserTestCase : public wilcot::tests::TestCase {
@@ -27,7 +28,7 @@ protected:
 	void testIntegerArgument() {
 		wilcot::cli::OptionParser parser;
 		wilcot::cli::Option numberOption("--number");
-		wilcot::cli::Argument<int> number;
+		wilcot::cli::Argument<int> number("N");
 		numberOption.setArgument(number);
 		parser.addOption(numberOption);
 		const char* argv1[] = {
@@ -54,7 +55,7 @@ protected:
 	void testStringArgument() {
 		wilcot::cli::OptionParser parser;
 		wilcot::cli::Option stringOption("--string");
-		wilcot::cli::Argument<std::string> string;
+		wilcot::cli::Argument<std::string> string("S");
 		stringOption.setArgument(string);
 		parser.addOption(stringOption);
 		const char* argv1[] = {
@@ -69,11 +70,30 @@ protected:
 		ASSERT(static_cast<std::string>(string) == argv2[2]);
 	}
 
+	void testFlagArgument() {
+		wilcot::cli::OptionParser parser;
+		wilcot::cli::Option stringOption("--flag");
+		wilcot::cli::FlagArgument flag;
+		stringOption.setArgument(flag);
+		parser.addOption(stringOption);
+		const char* argv1[] = {
+			"program"
+		};
+		parser.parse(sizeof(argv1) / sizeof(const char*), argv1);
+		ASSERT(!static_cast<bool>(flag));
+		const char* argv2[] = {
+			"program", "--flag"
+		};
+		parser.parse(sizeof(argv2) / sizeof(const char*), argv2);
+		ASSERT(static_cast<bool>(flag));
+	}
+
 public:
 	OptionParserTestCase() {
 		ADD_TEST(OptionParserTestCase, testCreate);
 		ADD_TEST(OptionParserTestCase, testIntegerArgument);
 		ADD_TEST(OptionParserTestCase, testStringArgument);
+		ADD_TEST(OptionParserTestCase, testFlagArgument);
 	}
 };
 

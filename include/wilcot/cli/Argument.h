@@ -9,22 +9,24 @@
 #include <wilcot/Object.h>
 #include <wilcot/cli/IArgument.h>
 #include <string>
-#include <vector>
 #include <sstream>
 
 namespace wilcot { namespace cli {
 
-template<class T>
-class Argument : public IArgument {
+template<class ValueType>
+class Argument : public Object, public IArgument {
 private:
+	std::string name_;
 	bool required_;
-	T value_;
+	ValueType value_;
 	bool empty_;
 
 public:
-	Argument(bool required = true);
+	Argument(const std::string& name, bool required = true);
 
-	operator const T&() const;
+	std::string getName() const;
+
+	operator const ValueType&() const;
 
 protected:
 	bool write(const std::string& argument);
