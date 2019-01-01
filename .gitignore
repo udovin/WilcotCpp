@@ -1,4 +1,5 @@
 *.o
 *.a
-/.build/
-/.vscode/
+.build/
+.vscode/
+library/

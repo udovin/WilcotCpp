@@ -3,12 +3,12 @@
  * @license MIT
  */
 
-#ifndef HEADER_wilcot_system_IFileHandle
-#define HEADER_wilcot_system_IFileHandle
+#ifndef HEADER_wilcot_os_IFileHandle
+#define HEADER_wilcot_os_IFileHandle
 
-#include <wilcot/system/detect.h>
+#include <wilcot/base.h>
 
-namespace wilcot { namespace system {
+namespace wilcot { namespace os {
 
 /**
  * Interface IFileHandle
@@ -22,7 +22,7 @@ public:
 	 *
 	 * @since 0.0.1
 	 */
-#ifdef WILCOT_SYSTEM_WINDOWS
+#ifdef WILCOT_OS_WINDOWS
 	typedef HANDLE Handle;
 #else
 	typedef int Handle;
@@ -36,6 +36,13 @@ public:
 	static const Handle INVALID_VALUE;
 
 	/**
+	 * Empty destructor
+	 *
+	 * @since 0.0.1
+	 */
+	virtual ~IFileHandle() = 0;
+
+	/**
 	 * Get system handle
 	 *
 	 * @return
@@ -47,4 +54,4 @@ public:
 
 }}
 
-#endif // HEADER_wilcot_system_IFileHandle
+#endif // HEADER_wilcot_os_IFileHandle

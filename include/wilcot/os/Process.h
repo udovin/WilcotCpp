@@ -3,17 +3,14 @@
  * @license MIT
  */
 
-#ifndef HEADER_wilcot_system_Process
-#define HEADER_wilcot_system_Process
+#ifndef HEADER_wilcot_os_Process
+#define HEADER_wilcot_os_Process
 
-#include <wilcot/Object.h>
-
-#include <wilcot/system/Path.h>
-#include <wilcot/system/IFileHandle.h>
-
+#include <wilcot/os/Path.h>
+#include <wilcot/os/IFileHandle.h>
 #include <vector>
 
-namespace wilcot { namespace system {
+namespace wilcot { namespace os {
 
 /**
  * Class Process
@@ -86,12 +83,12 @@ public:
 	/**
 	 * Set working directory
 	 *
-	 * @param workingDirectory
+	 * @param directory
 	 * @return
 	 *
 	 * @since 0.0.1
 	 */
-	Process& setWorkingDirectory(const Path& workingDirectory);
+	Process& setWorkingDirectory(const Path& directory);
 
 	/**
 	 * Set standard input
@@ -222,4 +219,4 @@ private:
 
 }}
 
-#endif // HEADER_wilcot_system_Process
+#endif // HEADER_wilcot_os_Process

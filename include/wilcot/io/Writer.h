@@ -7,9 +7,7 @@
 #define HEADER_wilcot_io_Writer
 
 #include <wilcot/Object.h>
-
 #include <wilcot/io/IStream.h>
-
 #include <string>
 
 namespace wilcot { namespace io {

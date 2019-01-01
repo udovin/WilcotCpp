@@ -24,19 +24,15 @@ TestCase::~TestCase() {
 TestCase& TestCase::run() {
 	int oldStdout = dup(STDOUT_FILENO);
 	int newStdout = open("/dev/null", O_WRONLY);
-
 	dup2(STDOUT_FILENO, oldStdout);
 	dup2(newStdout, STDOUT_FILENO);
-
 	std::vector<std::pair<std::string, Failure_> > failures;
-
+	std::vector<std::pair<std::string, std::string> > exceptions;
 	for (std::size_t i = 0; i < tests_.size(); i++) {
 		if ((i + 1) % 60 == 0) {
 			write(oldStdout, "\n", 1);
 		}
-
 		setUp();
-
 		try {
 			tests_[i]->invoke();
 			write(oldStdout, ".", 1);
@@ -47,13 +43,13 @@ TestCase& TestCase::run() {
 			);
 		} catch (const std::exception& exception) {
 			write(oldStdout, "E", 1);
+			exceptions.push_back(
+				std::make_pair(tests_[i]->name_, exception.what())
+			);
 		}
-
 		tearDown();
 	}
-
 	write(oldStdout, "\n", 1);
-
 	for (std::size_t i = 0; i < failures.size(); i++) {
 		std::stringstream ss;
 		ss << "Test '" << failures[i].first << "':" << std::endl;
@@ -62,9 +58,14 @@ TestCase& TestCase::run() {
 		std::string message(ss.str());
 		write(oldStdout, message.c_str(), message.size());
 	}
-
+	for (std::size_t i = 0; i < exceptions.size(); i++) {
+		std::stringstream ss;
+		ss << "Test '" << exceptions[i].first << "':" << std::endl;
+		ss << "What: " << exceptions[i].second << std::endl;
+		std::string message(ss.str());
+		write(oldStdout, message.c_str(), message.size());
+	}
 	close(oldStdout);
-
 	return *this;
 }
 

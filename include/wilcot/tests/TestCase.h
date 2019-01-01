@@ -7,12 +7,16 @@
 #define HEADER_wilcot_tests_TestCase
 
 #include <wilcot/Object.h>
-
 #include <string>
 #include <vector>
 
 namespace wilcot { namespace tests {
 
+/**
+ * Class TestCase
+ *
+ * @since 0.0.1
+ */
 class TestCase : public Object {
 private:
 	struct ITest_ {
@@ -51,18 +55,42 @@ private:
 			: code_(code), line_(line) {}
 	};
 
+	/**
+	 * @since 0.0.1
+	 */
 	std::vector<ITest_*> tests_;
 
 public:
+	/**
+	 * TestCase destructor
+	 *
+	 * @since 0.0.1
+	 */
 	~TestCase();
 
+	/**
+	 * @return
+	 *
+	 * @since 0.0.1
+	 */
 	TestCase& run();
 
 protected:
+	/**
+	 * TestCase constructor
+	 *
+	 * @since 0.0.1
+	 */
 	TestCase();
 
+	/**
+	 * @since 0.0.1
+	 */
 	virtual void setUp();
 
+	/**
+	 * @since 0.0.1
+	 */
 	virtual void tearDown();
 
 	template<class T>

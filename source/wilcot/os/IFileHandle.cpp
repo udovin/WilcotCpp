@@ -3,14 +3,16 @@
  * @license MIT
  */
 
-#include <wilcot/system/IFileHandle.h>
+#include <wilcot/os/IFileHandle.h>
 
-namespace wilcot { namespace system {
+namespace wilcot { namespace os {
 
-#ifdef WILCOT_SYSTEM_WINDOWS
+#ifdef WILCOT_OS_WINDOWS
 const IFileHandle::Handle IFileHandle::INVALID_VALUE = INVALID_HANDLE_VALUE;
 #else
 const IFileHandle::Handle IFileHandle::INVALID_VALUE = -1;
 #endif
+
+IFileHandle::~IFileHandle() {}
 
 }}

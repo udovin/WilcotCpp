@@ -3,14 +3,13 @@
  * @license MIT
  */
 
-#ifndef HEADER_wilcot_system_Path
-#define HEADER_wilcot_system_Path
+#ifndef HEADER_wilcot_os_Path
+#define HEADER_wilcot_os_Path
 
 #include <wilcot/Object.h>
-
 #include <string>
 
-namespace wilcot { namespace system {
+namespace wilcot { namespace os {
 
 /**
  * Class Path
@@ -87,6 +86,15 @@ public:
 	 * @since 0.0.1
 	 */
 	Path getAbsolute() const;
+
+	/**
+	 * Get parent path
+	 *
+	 * @return
+	 *
+	 * @since 0.0.1
+	 */
+	Path getParent() const;
 
 	/**
 	 * @param other
@@ -177,4 +185,4 @@ private:
 
 }}
 
-#endif // HEADER_wilcot_system_Path
+#endif // HEADER_wilcot_os_Path

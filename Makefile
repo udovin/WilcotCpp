@@ -11,7 +11,7 @@ BUILD_DIRECTORY := .build
 COMPILER := g++
 COMPILE_FLAGS := \
 	-I$(INCLUDE_DIRECTORY) --std=c++03 -pedantic -pedantic-errors -Wall \
-	-Wextra -Werror -Wconversion -Weffc++ -Wduplicated-cond -Wduplicated-branches \
+	-Wextra -Werror -Wconversion -Weffc++ -Wduplicated-cond \
 	-Wlogical-op -Wnull-dereference -Wold-style-cast -Wuseless-cast -Wshadow
 
 # Recursive find by pattern
@@ -35,8 +35,12 @@ build: $(LIBRARY_FILE)
 tests: $(BINARY_TESTS)
 
 clean:
-	@echo "[RM] '$(BUILD_DIRECTORY)', '$(LIBRARY_FILE)'"
-	@rm -rf "$(BUILD_DIRECTORY)" "$(LIBRARY_FILE)"
+	@echo "[RM] '$(BUILD_DIRECTORY)'"
+	@rm -rf "$(BUILD_DIRECTORY)"
+
+reset: clean
+	@echo "[RM] '$(LIBRARY_FILE)'"
+	@rm -rf "$(LIBRARY_FILE)"
 
 $(LIBRARY_FILE): $(OBJECT_FILES)
 	@echo "[AR] '$@'"

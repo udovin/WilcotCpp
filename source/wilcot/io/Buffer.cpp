@@ -4,7 +4,6 @@
  */
 
 #include <wilcot/io/Buffer.h>
-
 #include <algorithm>
 #include <cstring>
 
@@ -22,7 +21,6 @@ Buffer::Buffer(const Buffer& other)
 	begin_ = new char[other.maxSize()];
 	end_ = begin_ + other.maxSize();
 	start_ = finish_ = begin_;
-
 	if (other.start_ > other.finish_) {
 		if (other.start_ < other.end_) {
 			memcpy(finish_, other.start_, other.end_ - other.start_);
@@ -48,7 +46,6 @@ Buffer& Buffer::operator=(const Buffer& other) {
 		end_ = begin_ + other.maxSize();
 	}
 	start_ = finish_ = begin_;
-
 	if (other.start_ > other.finish_) {
 		if (other.start_ < other.end_) {
 			memcpy(finish_, other.start_, other.end_ - other.start_);
@@ -60,7 +57,6 @@ Buffer& Buffer::operator=(const Buffer& other) {
 		memcpy(finish_, other.start_, other.size());
 		finish_ += other.size();
 	}
-
 	return *this;
 }
 
@@ -87,7 +83,6 @@ std::size_t Buffer::read(void* buffer, std::size_t count) {
 			finish_++;
 		}
 	}
-
 	return count;
 }
 
@@ -113,13 +108,11 @@ std::size_t Buffer::write(const void* buffer, std::size_t count) {
 			finish_ = begin_ + (prefix - 1);
 		}
 	}
-
 	return count;
 }
 
 Buffer& Buffer::clear() {
 	start_ = finish_ = begin_;
-
 	return *this;
 }
 
@@ -130,17 +123,15 @@ std::size_t Buffer::maxSize() const {
 std::size_t Buffer::size() const {
 	if (start_ <= finish_) {
 		return finish_ - start_;
-	} else {
-		return (finish_ - begin_) + (end_ - start_) + 1;
 	}
+	return (finish_ - begin_) + (end_ - start_) + 1;
 }
 
 std::size_t Buffer::capacity() const {
 	if (start_ <= finish_) {
 		return (end_ - finish_) + (start_ - begin_);
-	} else {
-		return (start_ - finish_) - 1;
 	}
+	return (start_ - finish_) - 1;
 }
 
 bool Buffer::empty() const {

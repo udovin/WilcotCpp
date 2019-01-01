@@ -6,8 +6,7 @@
 #ifndef HEADER_wilcot_io_IStream
 #define HEADER_wilcot_io_IStream
 
-#include <wilcot/system/detect.h>
-
+#include <wilcot/base.h>
 #include <cstddef>
 
 namespace wilcot { namespace io {
