@@ -8,6 +8,7 @@ Wilcot Cpp — a C++ library that helps in developing Linux applications.
  * Linux container creation;
  * Convenient testing utils;
  * Convenient working with filesystem;
+ * Convenient working with console;
  * Streams and ring buffer.
 
 ## Examples
@@ -17,12 +18,18 @@ Wilcot Cpp — a C++ library that helps in developing Linux applications.
 ```cpp
 // Create new option parser
 wilcot::cli::OptionParser parser;
-// Create new options
-wilcot::cli::Option inputOption("--input");
-wilcot::cli::Option outputOption("--output");
+// Create arguments for options
+wilcot::cli::Argument<std::string> inputFile("path");
+wilcot::cli::Argument<std::string> outputFile("path");
 // Add options to option parser
-parser.addOption(inputOption);
-parser.addOption(outputOption);
+parser.addOption(
+	wilcot::cli::Option("--input")
+	.setArgument(inputFile)
+);
+parser.addOption(
+	wilcot::cli::Option("--output")
+	.setArgument(outputFile)
+);
 // Parse arguments passed to main
 parser.parse(argc, argv);
 ```
