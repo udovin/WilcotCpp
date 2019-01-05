@@ -7,17 +7,13 @@
 #define HEADER_wilcot_cli_Option
 
 #include <wilcot/Object.h>
-#include <wilcot/cli/IArgument.h>
 #include <string>
 #include <vector>
 
 namespace wilcot { namespace cli {
 
 class Option : public Object {
-private:
-	std::vector<std::string> names_;
-	std::string description_;
-	IArgument* argument_;
+	friend class OptionParser;
 
 public:
 	Option();
@@ -25,10 +21,6 @@ public:
 	Option(const std::string& name);
 
 	Option(const std::vector<std::string>& names);
-
-	Option(const Option& other);
-
-	Option& operator=(const Option& other);
 
 	const std::vector<std::string>& getNames() const;
 
@@ -40,11 +32,19 @@ public:
 
 	Option& setDescription(const std::string& description);
 
-	const IArgument* getArgument() const;
+	virtual std::string getArgument() const;
 
-	IArgument* getArgument();
+protected:
+	virtual bool write(const std::string& argument);
 
-	Option& setArgument(IArgument& argument);
+	virtual void close();
+
+	virtual void clear();
+
+private:
+	std::vector<std::string> names_;
+
+	std::string description_;
 };
 
 }}

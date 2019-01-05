@@ -14,20 +14,21 @@
 namespace wilcot { namespace cli {
 
 class OptionParser : public Object {
-private:
-	std::vector<Option> options_;
-	std::map<std::string, size_t> optionMap_;
-
-	std::string getOptionHelp_() const;
-
 public:
 	OptionParser();
 
-	OptionParser& addOption(const Option& option);
+	OptionParser& addOption(Option& option);
 
 	std::string getHelp() const;
 
 	void parse(int argc, const char* argv[]);
+
+private:
+	std::vector<Option*> options_;
+
+	std::map<std::string, size_t> optionMap_;
+
+	std::string getOptionHelp_() const;
 };
 
 }}

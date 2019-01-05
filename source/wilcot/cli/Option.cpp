@@ -7,24 +7,13 @@
 
 namespace wilcot { namespace cli {
 
-Option::Option() : names_(), description_(), argument_(NULL) {}
+Option::Option() : names_(), description_() {}
 
 Option::Option(const std::string& name)
-	: names_(1, name), description_(), argument_(NULL) {}
+	: names_(1, name), description_() {}
 
 Option::Option(const std::vector<std::string>& names)
-	: names_(names), description_(), argument_(NULL) {}
-
-Option::Option(const Option& other)
-	: names_(other.names_), description_(other.description_)
-	, argument_(other.argument_) {}
-
-Option& Option::operator=(const Option& other) {
-	names_ = other.names_;
-	description_ = other.description_;
-	argument_ = other.argument_;
-	return *this;
-}
+	: names_(names), description_() {}
 
 const std::vector<std::string>& Option::getNames() const {
 	return names_;
@@ -49,17 +38,17 @@ Option& Option::setDescription(const std::string& description) {
 	return *this;
 }
 
-const IArgument* Option::getArgument() const {
-	return argument_;
+std::string Option::getArgument() const {
+	return std::string();
 }
 
-IArgument* Option::getArgument() {
-	return argument_;
+bool Option::write(const std::string& argument) {
+	WILCOT_UNUSED(argument);
+	return false;
 }
 
-Option& Option::setArgument(IArgument& argument) {
-	argument_ = &argument;
-	return *this;
-}
+void Option::close() {}
+
+void Option::clear() {}
 
 }}

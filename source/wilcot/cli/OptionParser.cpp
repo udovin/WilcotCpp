@@ -10,14 +10,16 @@
 
 namespace wilcot { namespace cli {
 
+static const size_t __MAX_OPTION_LENGTH = 16;
+
 OptionParser::OptionParser() : options_(), optionMap_() {}
 
-OptionParser& OptionParser::addOption(const Option& option) {
+OptionParser& OptionParser::addOption(Option& option) {
 	const std::vector<std::string> names(option.getNames());
 	for (size_t i = 0; i < names.size(); i++) {
 		optionMap_[names[i]] = options_.size();
 	}
-	options_.push_back(option);
+	options_.push_back(&option);
 	return *this;
 }
 
@@ -31,23 +33,18 @@ std::string OptionParser::getHelp() const {
 
 void OptionParser::parse(int argc, const char* argv[]) {
 	for (size_t i = 0; i < options_.size(); i++) {
-		if (options_[i].getArgument() != NULL) {
-			options_[i].getArgument()->clear();
-		}
+		options_[i]->clear();
 	}
 	for (int i = 1; i < argc; i++) {
 		std::map<std::string, size_t>::const_iterator it(
 			optionMap_.find(argv[i])
 		);
 		if (it != optionMap_.end()) {
-			Option& option = options_[it->second];
-			if (option.getArgument() != NULL) {
-				IArgument& argument = *option.getArgument();
-				while (i + 1 < argc && argument.write(argv[i + 1])) {
-					i++;
-				}
-				argument.flush();
+			Option& option = *options_[it->second];
+			while (i + 1 < argc && option.write(argv[i + 1])) {
+				i++;
 			}
+			option.close();
 		} else {
 			throw std::exception();
 		}
@@ -59,17 +56,15 @@ std::string OptionParser::getOptionHelp_() const {
 	std::vector<std::string> options;
 	size_t maxLength = 0;
 	for (size_t i = 0; i < options_.size(); i++) {
-		const std::vector<std::string>& names = options_[i].getNames();
-		const IArgument* argument = options_[i].getArgument();
+		const Option& option = *options_[i];
+		const std::vector<std::string>& names = option.getNames();
 		for (size_t j = 0; j < names.size(); j++) {
 			if (j > 0) {
 				ss << ", ";
 			}
 			ss << names[j];
-			if (argument != NULL) {
-				if (!argument->getName().empty()) {
-					ss << ' ' << argument->getName();
-				}
+			if (!option.getArgument().empty()) {
+				ss << ' ' << option.getArgument();
 			}
 		}
 		options.push_back(ss.str());
@@ -78,8 +73,8 @@ std::string OptionParser::getOptionHelp_() const {
 		}
 		ss.str("");
 	}
-	if (maxLength > 14) {
-		maxLength = 14;
+	if (maxLength > __MAX_OPTION_LENGTH) {
+		maxLength = __MAX_OPTION_LENGTH;
 	}
 	for (size_t i = 0; i < options_.size(); i++) {
 		ss << "  " << options[i];
@@ -93,7 +88,7 @@ std::string OptionParser::getOptionHelp_() const {
 			}
 		}
 		ss << "  ";
-		ss << options_[i].getDescription() << std::endl;
+		ss << options_[i]->getDescription() << std::endl;
 	}
 	return ss.str();
 }
