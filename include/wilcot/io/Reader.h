@@ -35,7 +35,14 @@ public:
 	 *
 	 * @since 0.0.1
 	 */
-	virtual std::size_t read(void* buffer, std::size_t count);
+	virtual size_t read(void* buffer, size_t count);
+
+	/**
+	 * Checks that stream is not closed
+	 *
+	 * @since 0.0.1
+	 */
+	virtual operator bool() const;
 
 private:
 	/**

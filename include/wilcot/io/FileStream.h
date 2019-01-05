@@ -20,21 +20,6 @@ namespace wilcot { namespace io {
 class FileStream : public Object, public IStream, public os::IFileHandle {
 public:
 	/**
-	 * @since 0.0.1
-	 */
-	typedef int Mode;
-
-	/**
-	 * @since 0.0.1
-	 */
-	static const Mode READ;
-
-	/**
-	 * @since 0.0.1
-	 */
-	static const Mode WRITE;
-
-	/**
 	 * FileStream constructor
 	 *
 	 * @param path
@@ -58,18 +43,18 @@ public:
 	 *
 	 * @since 0.0.1
 	 */
-	std::size_t read(void* buffer, std::size_t count);
+	size_t read(void* buffer, size_t count);
 
 	/**
 	 * Write bytes to stream
 	 *
 	 * @param buffer
-	 * @param size
+	 * @param count
 	 * @return
 	 *
 	 * @since 0.0.1
 	 */
-	std::size_t write(const void* buffer, std::size_t count);
+	size_t write(const void* buffer, size_t count);
 
 	/**
 	 * Close stream
@@ -79,6 +64,34 @@ public:
 	 * @since 0.0.1
 	 */
 	IStream& close();
+
+	/**
+	 * Get stream mode
+	 *
+	 * @since 0.0.1
+	 */
+	Mode getMode() const;
+
+	/**
+	 * Checks that stream is closed
+	 *
+	 * @since 0.0.1
+	 */
+	bool isOpen() const;
+
+	/**
+	 * Checks that stream is readable
+	 *
+	 * @since 0.0.1
+	 */
+	bool isReadable() const;
+
+	/**
+	 * Checks that stream is writable
+	 *
+	 * @since 0.0.1
+	 */
+	bool isWritable() const;
 
 	/**
 	 * Get system handle
@@ -94,6 +107,11 @@ private:
 	 * @since 0.0.1
 	 */
 	os::IFileHandle::Handle handle_;
+
+	/**
+	 * @since 0.0.1
+	 */
+	Mode mode_;
 };
 
 }}

@@ -30,12 +30,19 @@ public:
 	 * Write bytes to stream
 	 *
 	 * @param buffer
-	 * @param size
+	 * @param count
 	 * @return
 	 *
 	 * @since 0.0.1
 	 */
-	virtual std::size_t write(const void* buffer, std::size_t count);
+	virtual size_t write(const void* buffer, size_t count);
+
+	/**
+	 * Checks that stream is not closed
+	 *
+	 * @since 0.0.1
+	 */
+	virtual operator bool() const;
 
 private:
 	/**

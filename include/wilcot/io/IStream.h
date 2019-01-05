@@ -19,6 +19,26 @@ namespace wilcot { namespace io {
 class IStream {
 public:
 	/**
+	 * @since 0.0.1
+	 */
+	typedef int Mode;
+
+	/**
+	 * @since 0.0.1
+	 */
+	static const Mode NOT_OPEN;
+
+	/**
+	 * @since 0.0.1
+	 */
+	static const Mode READ;
+
+	/**
+	 * @since 0.0.1
+	 */
+	static const Mode WRITE;
+
+	/**
 	 * Empty destructor
 	 *
 	 * @since 0.0.1
@@ -34,18 +54,25 @@ public:
 	 *
 	 * @since 0.0.1
 	 */
-	virtual std::size_t read(void* buffer, std::size_t count) = 0;
+	virtual size_t read(void* buffer, size_t count) = 0;
 
 	/**
 	 * Write bytes to stream
 	 *
 	 * @param buffer
-	 * @param size
+	 * @param count
 	 * @return
 	 *
 	 * @since 0.0.1
 	 */
-	virtual std::size_t write(const void* buffer, std::size_t count) = 0;
+	virtual size_t write(const void* buffer, size_t count) = 0;
+
+	/**
+	 * Get stream mode
+	 *
+	 * @since 0.0.1
+	 */
+	virtual Mode getMode() const = 0;
 
 	/**
 	 * Close stream
@@ -53,6 +80,27 @@ public:
 	 * @since 0.0.1
 	 */
 	virtual IStream& close() = 0;
+
+	/**
+	 * Checks that stream is not closed
+	 *
+	 * @since 0.0.1
+	 */
+	virtual bool isOpen() const = 0;
+
+	/**
+	 * Checks that stream is readable
+	 *
+	 * @since 0.0.1
+	 */
+	virtual bool isReadable() const = 0;
+
+	/**
+	 * Checks that stream is writable
+	 *
+	 * @since 0.0.1
+	 */
+	virtual bool isWritable() const = 0;
 };
 
 }}
