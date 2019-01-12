@@ -6,6 +6,7 @@
 #include <wilcot/io/FileStream.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <stdexcept>
 
 namespace wilcot { namespace io {
 
@@ -28,7 +29,12 @@ FileStream::FileStream(const os::Path& path, Mode mode)
 		// flags for creating and clearing the file.
 		flags |= O_WRONLY | O_CREAT | O_TRUNC;
 	}
-	handle_ = ::open(path, flags);
+	handle_ = ::open(path, flags,
+		S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH
+	);
+	if (handle_ == os::IFileHandle::INVALID_VALUE) {
+		throw std::runtime_error("Unable to open file");
+	}
 }
 
 FileStream::~FileStream() {

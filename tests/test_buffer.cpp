@@ -9,7 +9,7 @@
 #include <cstring>
 
 class BufferTestCase : public wilcot::tests::TestCase {
-public:
+protected:
 	char data[255];
 	char test[255];
 	std::size_t testSize;
@@ -158,6 +158,7 @@ public:
 		ASSERT(buffer.maxSize() == 20);
 	}
 
+public:
 	BufferTestCase() : testSize() {
 		ADD_TEST(BufferTestCase, testCreate);
 		ADD_TEST(BufferTestCase, testReadFromEmpty);

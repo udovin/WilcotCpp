@@ -124,7 +124,7 @@ Container& Container::start() {
 		Container::entryPoint_,
 		static_cast<void *>(stack + STACK_SIZE_),
 		CLONE_NEWUSER | CLONE_NEWNS | CLONE_NEWNET | CLONE_NEWUTS
-			| CLONE_NEWIPC | CLONE_NEWPID | SIGCHLD,
+			| CLONE_NEWIPC | CLONE_NEWPID | CLONE_NEWCGROUP | SIGCHLD,
 		static_cast<void *>(this));
 	delete[] stack;
 	close(pipe_[0]);
@@ -174,6 +174,7 @@ int Container::entryPoint_() {
 		setupNetworkNamespace_();
 		setupUtsNamespace_();
 		setupIpcNamespace_();
+		setupCgroupNamespace_();
 		dup2(standardInputHandle_, STDIN_FILENO);
 		dup2(standardOutputHandle_, STDOUT_FILENO);
 		dup2(standardErrorHandle_, STDERR_FILENO);
@@ -221,19 +222,20 @@ void Container::prepareUserNamespace_() {
 }
 
 #ifdef WILCOT_OS_LINUX
-static const char* NAMESPACE_FILES__[5] = {
+static const char* NAMESPACE_FILES__[6] = {
 	"/proc/%d/ns/user",
 	"/proc/%d/ns/mnt",
 	"/proc/%d/ns/net",
 	"/proc/%d/ns/utc",
-	"/proc/%d/ns/ipc"
+	"/proc/%d/ns/ipc",
+	"/proc/%d/ns/cgroup",
 };
 #endif
 
 void Container::setupNamespaceHandles_() {
 #ifdef WILCOT_OS_LINUX
 	char path[40];
-	for (int i = 0; i < 5; i++) {
+	for (int i = 0; i < 6; i++) {
 		sprintf(path, NAMESPACE_FILES__[i], handle_);
 		namespaceHandles_[i] = open(path, O_RDONLY);
 	}
@@ -306,5 +308,7 @@ void Container::setupUtsNamespace_() {
 }
 
 void Container::setupIpcNamespace_() {}
+
+void Container::setupCgroupNamespace_() {}
 
 }}

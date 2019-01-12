@@ -229,7 +229,7 @@ private:
 	/**
 	 * @since 0.0.1
 	 */
-	int namespaceHandles_[5];
+	int namespaceHandles_[6];
 
 	/**
 	 * An entry point for child process
@@ -298,6 +298,13 @@ private:
 	 * @since 0.0.1
 	 */
 	void setupIpcNamespace_();
+
+	/**
+	 * Setup cgroup namespace
+	 *
+	 * @since 0.1.0
+	 */
+	void setupCgroupNamespace_();
 };
 
 }}

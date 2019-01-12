@@ -7,7 +7,7 @@
 #include <wilcot/os/Process.h>
 
 class ProcessTestCase : public wilcot::tests::TestCase {
-public:
+protected:
 	void testDevNull() {
 		wilcot::os::Process process;
 		process.setProgram("/dev/null");
@@ -41,6 +41,7 @@ public:
 		ASSERT(process.getExitCode() == 0);
 	}
 
+public:
 	ProcessTestCase() {
 		ADD_TEST(ProcessTestCase, testDevNull);
 		ADD_TEST(ProcessTestCase, testBinLs);
