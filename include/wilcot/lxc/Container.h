@@ -98,6 +98,15 @@ public:
 	Container& setWorkingDirectory(const os::Path& directory);
 
 	/**
+	 * Get exit code
+	 *
+	 * @return
+	 *
+	 * @since 0.0.1
+	 */
+	int getExitCode() const;
+
+	/**
 	 * Set standard input
 	 *
 	 * @param inputHandle
@@ -127,6 +136,7 @@ public:
 	 */
 	Container& setStandardError(os::IFileHandle& outputHandle);
 
+#ifdef WILCOT_OS_LINUX
 	/**
 	 * Add bind mount
 	 *
@@ -139,15 +149,7 @@ public:
 	Container& addBindMount(
 		const os::Path& source, const os::Path& target,
 		bool readOnly = false);
-
-	/**
-	 * Get exit code
-	 *
-	 * @return
-	 *
-	 * @since 0.0.1
-	 */
-	int getExitCode() const;
+#endif
 
 	/**
 	 * Start container
@@ -199,6 +201,11 @@ private:
 	/**
 	 * @since 0.0.1
 	 */
+	int exitCode_;
+
+	/**
+	 * @since 0.0.1
+	 */
 	int standardInputHandle_;
 
 	/**
@@ -211,15 +218,11 @@ private:
 	 */
 	int standardErrorHandle_;
 
+#ifdef WILCOT_OS_LINUX
 	/**
 	 * @since 0.0.1
 	 */
 	std::vector<BindMount_> bindMounts_;
-
-	/**
-	 * @since 0.0.1
-	 */
-	int exitCode_;
 
 	/**
 	 * @since 0.0.1
@@ -229,7 +232,8 @@ private:
 	/**
 	 * @since 0.0.1
 	 */
-	int namespaceHandles_[6];
+	std::vector<int> namespaceHandles_;
+#endif
 
 	/**
 	 * An entry point for child process
@@ -250,6 +254,7 @@ private:
 	 */
 	int entryPoint_();
 
+#ifdef WILCOT_OS_LINUX
 	/**
 	 * Make all mapping for users and groups
 	 *
@@ -263,6 +268,13 @@ private:
 	 * @since 0.0.1
 	 */
 	void setupNamespaceHandles_();
+
+	/**
+	 * Clean descriptors for namespaces
+	 *
+	 * @since 0.0.1
+	 */
+	void cleanNamespaceHandles_();
 
 	/**
 	 * Setup user namespace
@@ -305,6 +317,7 @@ private:
 	 * @since 0.1.0
 	 */
 	void setupCgroupNamespace_();
+#endif
 };
 
 }}

@@ -31,11 +31,13 @@ protected:
 		arguments.push_back("-al");
 		container.setProgram("/bin/ls");
 		container.setArguments(arguments);
+#ifdef WILCOT_OS_LINUX
 		container.addBindMount("/bin", "/bin", true);
 		container.addBindMount("/lib", "/lib", true);
 		if (wilcot::os::pathExists("/lib64")) {
 			container.addBindMount("/lib64", "/lib64", true);
 		}
+#endif
 		container.start();
 		container.wait();
 		ASSERT(container.getExitCode() == 0);
@@ -47,11 +49,13 @@ protected:
 		arguments.push_back("/bin/sh");
 		container.setProgram("/bin/sh");
 		container.setArguments(arguments);
+#ifdef WILCOT_OS_LINUX
 		container.addBindMount("/bin", "/bin", true);
 		container.addBindMount("/lib", "/lib", true);
 		if (wilcot::os::pathExists("/lib64")) {
 			container.addBindMount("/lib64", "/lib64", true);
 		}
+#endif
 		{
 			wilcot::io::FileStream inputFileStream(
 				tempPath / "input",

@@ -18,15 +18,18 @@ namespace wilcot { namespace os {
 
 #ifdef WILCOT_OS_LINUX
 static const std::size_t STACK_SIZE__ = 1048576;
+#else
+#define STDIN_FILENO -1
+#define STDOUT_FILENO -1
+#define STDERR_FILENO -1
 #endif
 
 Process::Process()
 	: handle_(-1), program_(), arguments_()
-	, workingDirectory_(".")
+	, workingDirectory_("."), exitCode_()
 	, standardInputHandle_(STDIN_FILENO)
 	, standardOutputHandle_(STDOUT_FILENO)
-	, standardErrorHandle_(STDERR_FILENO)
-	, exitCode_(0) {}
+	, standardErrorHandle_(STDERR_FILENO) {}
 
 Process::~Process() {
 	stop();
@@ -59,6 +62,10 @@ Process& Process::setWorkingDirectory(const Path& directory) {
 	return *this;
 }
 
+int Process::getExitCode() const {
+	return exitCode_;
+}
+
 Process& Process::setStandardInput(IFileHandle& inputHandle) {
 	standardInputHandle_ = inputHandle.getHandle();
 	return *this;
@@ -72,10 +79,6 @@ Process& Process::setStandardOutput(IFileHandle& outputHandle) {
 Process& Process::setStandardError(IFileHandle& outputHandle) {
 	standardErrorHandle_ = outputHandle.getHandle();
 	return *this;
-}
-
-int Process::getExitCode() const {
-	return exitCode_;
 }
 
 Process& Process::start() {
