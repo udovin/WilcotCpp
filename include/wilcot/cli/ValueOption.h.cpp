@@ -21,6 +21,16 @@ ValueOption<ValueType>::ValueOption(const std::vector<std::string>& names)
 	: Option(names), argument_(), required_(), value_(), empty_() {}
 
 template<class ValueType>
+ValueOption<ValueType>::ValueOption(
+	const std::string& name, const std::string& argument)
+	: Option(name), argument_(argument), required_(), value_(), empty_() {}
+
+template<class ValueType>
+ValueOption<ValueType>::ValueOption(
+	const std::vector<std::string>& names, const std::string& argument)
+	: Option(names), argument_(argument), required_(), value_(), empty_() {}
+
+template<class ValueType>
 std::string ValueOption<ValueType>::getArgument() const {
 	return argument_;
 }

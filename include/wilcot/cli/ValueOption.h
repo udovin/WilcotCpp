@@ -21,6 +21,11 @@ public:
 
 	ValueOption(const std::vector<std::string>& names);
 
+	ValueOption(const std::string& name, const std::string& argument);
+
+	ValueOption(
+		const std::vector<std::string>& names, const std::string& argument);
+
 	std::string getArgument() const;
 
 	ValueOption& setArgument(const std::string& argument);

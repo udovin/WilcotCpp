@@ -28,8 +28,8 @@ protected:
 
 	void testIntegerArgument() {
 		wilcot::cli::OptionParser parser;
-		wilcot::cli::ValueOption<int> numberOption("--number");
-		parser.addOption(numberOption.setArgument("N"));
+		wilcot::cli::ValueOption<int> numberOption("--number", "N");
+		parser.addOption(numberOption);
 		const char* argv1[] = {
 			"program", "--number", "12345"
 		};
@@ -53,8 +53,8 @@ protected:
 
 	void testStringArgument() {
 		wilcot::cli::OptionParser parser;
-		wilcot::cli::ValueOption<std::string> stringOption("--string");
-		parser.addOption(stringOption.setArgument("S"));
+		wilcot::cli::ValueOption<std::string> stringOption("--string", "S");
+		parser.addOption(stringOption);
 		const char* argv1[] = {
 			"program", "--string", "simple_string"
 		};

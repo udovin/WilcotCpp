@@ -61,8 +61,7 @@ Container::Container(const os::Path& path)
 	, standardOutputHandle_(STDOUT_FILENO)
 	, standardErrorHandle_(STDERR_FILENO)
 	, bindMounts_(), pipe_()
-	, namespaceHandles_(NAMESPACE_FILES_SIZE__, -1)
-{}
+	, namespaceHandles_(NAMESPACE_FILES_SIZE__, -1) {}
 
 Container::~Container() {
 	stop();
