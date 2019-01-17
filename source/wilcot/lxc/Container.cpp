@@ -3,19 +3,20 @@
  * @license MIT
  */
 
+#include <wilcot/base.h>
+
+#ifdef WILCOT_OS_LINUX
 #include <wilcot/lxc/Container.h>
 #include <wilcot/os/files.h>
 #include <wilcot/io/FileStream.h>
-#ifdef WILCOT_OS_LINUX
-#	include <unistd.h>
-#	include <signal.h>
-#	include <fcntl.h>
-#	include <sys/wait.h>
-#	include <sys/mount.h>
-#	include <sys/stat.h>
-#	include <sys/syscall.h>
-#	include <cstring>
-#endif
+#include <unistd.h>
+#include <signal.h>
+#include <fcntl.h>
+#include <sys/wait.h>
+#include <sys/mount.h>
+#include <sys/stat.h>
+#include <sys/syscall.h>
+#include <cstring>
 #include <stdexcept>
 #include <sstream>
 #include <cstdlib>
@@ -25,7 +26,6 @@
 
 namespace wilcot { namespace lxc {
 
-#ifdef WILCOT_OS_LINUX
 static const size_t STACK_SIZE_ = 1048576;
 
 static std::string getRandomString__(size_t length) {
@@ -53,11 +53,6 @@ static const char* NAMESPACE_FILES__[NAMESPACE_FILES_SIZE__] = {
 	"/proc/%d/ns/ipc",
 	"/proc/%d/ns/cgroup",
 };
-#else
-#define STDIN_FILENO -1
-#define STDOUT_FILENO -1
-#define STDERR_FILENO -1
-#endif
 
 Container::Container(const os::Path& path)
 	: path_(path), handle_(-1), program_(), arguments_()
@@ -65,10 +60,8 @@ Container::Container(const os::Path& path)
 	, standardInputHandle_(STDIN_FILENO)
 	, standardOutputHandle_(STDOUT_FILENO)
 	, standardErrorHandle_(STDERR_FILENO)
-#ifdef WILCOT_OS_LINUX
 	, bindMounts_(), pipe_()
 	, namespaceHandles_(NAMESPACE_FILES_SIZE__, -1)
-#endif
 {}
 
 Container::~Container() {
@@ -123,17 +116,14 @@ Container& Container::setStandardError(os::IFileHandle& outputHandle) {
 	return *this;
 }
 
-#ifdef WILCOT_OS_LINUX
 Container& Container::addBindMount(
 	const os::Path& source, const os::Path& target, bool readOnly) {
 	bindMounts_.push_back(
 		std::make_pair(std::make_pair(source, target), readOnly));
 	return *this;
 }
-#endif
 
 Container& Container::start() {
-#ifdef WILCOT_OS_LINUX
 	if (pipe(pipe_) == -1) {
 		throw std::runtime_error("Unable to create pipe.");
 	}
@@ -148,36 +138,27 @@ Container& Container::start() {
 		static_cast<void *>(this));
 	delete[] stack;
 	close(pipe_[0]);
-#endif
 	// Failed to clone current container.
 	if (handle_ == -1) {
-#ifdef WILCOT_OS_LINUX
 		close(pipe_[1]);
-#endif
 		throw std::runtime_error("Unable to start container.");
 	}
-#ifdef WILCOT_OS_LINUX
 	prepareUserNamespace_();
 	setupNamespaceHandles_();
-#endif
 	return *this;
 }
 
 Container& Container::stop() {
-#ifdef WILCOT_OS_LINUX
 	kill(handle_, SIGKILL);
 	cleanNamespaceHandles_();
 	handle_ = -1;
-#endif
 	return *this;
 }
 
 Container& Container::wait() {
-#ifdef WILCOT_OS_LINUX
 	int status;
 	waitpid(handle_, &status, 0);
 	exitCode_ = WEXITSTATUS(status);
-#endif
 	return *this;
 }
 
@@ -186,11 +167,8 @@ int Container::entryPoint_(void* container) {
 }
 
 int Container::entryPoint_() {
-#ifdef WILCOT_OS_LINUX
 	close(pipe_[1]);
-#endif
 	try {
-#ifdef WILCOT_OS_LINUX
 		setupUserNamespace_();
 		// Now we should initialize mount namespace.
 		setupMountNamespace_();
@@ -209,14 +187,12 @@ int Container::entryPoint_() {
 		arguments[arguments_.size()] = NULL;
 		execv(program_, arguments);
 		delete[] arguments;
-#endif
 		return EXIT_FAILURE;
 	} catch (const std::exception& exception) {
 		return EXIT_FAILURE;
 	}
 }
 
-#ifdef WILCOT_OS_LINUX
 void Container::prepareUserNamespace_() {
 	int fd;
 	char path[40], data[256];
@@ -326,6 +302,6 @@ void Container::setupUtsNamespace_() {
 void Container::setupIpcNamespace_() {}
 
 void Container::setupCgroupNamespace_() {}
-#endif
 
 }}
+#endif

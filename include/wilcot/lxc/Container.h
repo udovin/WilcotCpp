@@ -6,6 +6,9 @@
 #ifndef HEADER_wilcot_lxc_Container
 #define HEADER_wilcot_lxc_Container
 
+#include <wilcot/base.h>
+
+#ifdef WILCOT_OS_LINUX
 #include <wilcot/os/Path.h>
 #include <wilcot/os/IFileHandle.h>
 #include <string>
@@ -136,7 +139,6 @@ public:
 	 */
 	Container& setStandardError(os::IFileHandle& outputHandle);
 
-#ifdef WILCOT_OS_LINUX
 	/**
 	 * Add bind mount
 	 *
@@ -149,7 +151,6 @@ public:
 	Container& addBindMount(
 		const os::Path& source, const os::Path& target,
 		bool readOnly = false);
-#endif
 
 	/**
 	 * Start container
@@ -218,7 +219,6 @@ private:
 	 */
 	int standardErrorHandle_;
 
-#ifdef WILCOT_OS_LINUX
 	/**
 	 * @since 0.0.1
 	 */
@@ -233,7 +233,6 @@ private:
 	 * @since 0.0.1
 	 */
 	std::vector<int> namespaceHandles_;
-#endif
 
 	/**
 	 * An entry point for child process
@@ -254,7 +253,6 @@ private:
 	 */
 	int entryPoint_();
 
-#ifdef WILCOT_OS_LINUX
 	/**
 	 * Make all mapping for users and groups
 	 *
@@ -317,9 +315,9 @@ private:
 	 * @since 0.1.0
 	 */
 	void setupCgroupNamespace_();
-#endif
 };
 
 }}
+#endif
 
 #endif // HEADER_wilcot_lxc_Container

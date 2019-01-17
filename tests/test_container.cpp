@@ -3,6 +3,9 @@
  * @license MIT
  */
 
+#include <wilcot/base.h>
+
+#ifdef WILCOT_OS_LINUX
 #include <wilcot/tests/TestCase.h>
 #include <wilcot/lxc/Container.h>
 #include <wilcot/os/files.h>
@@ -31,13 +34,11 @@ protected:
 		arguments.push_back("-al");
 		container.setProgram("/bin/ls");
 		container.setArguments(arguments);
-#ifdef WILCOT_OS_LINUX
 		container.addBindMount("/bin", "/bin", true);
 		container.addBindMount("/lib", "/lib", true);
 		if (wilcot::os::pathExists("/lib64")) {
 			container.addBindMount("/lib64", "/lib64", true);
 		}
-#endif
 		container.start();
 		container.wait();
 		ASSERT(container.getExitCode() == 0);
@@ -49,13 +50,11 @@ protected:
 		arguments.push_back("/bin/sh");
 		container.setProgram("/bin/sh");
 		container.setArguments(arguments);
-#ifdef WILCOT_OS_LINUX
 		container.addBindMount("/bin", "/bin", true);
 		container.addBindMount("/lib", "/lib", true);
 		if (wilcot::os::pathExists("/lib64")) {
 			container.addBindMount("/lib64", "/lib64", true);
 		}
-#endif
 		{
 			wilcot::io::FileStream inputFileStream(
 				tempPath / "input",
@@ -97,3 +96,8 @@ public:
 };
 
 ADD_TEST_CASE(ContainerTestCase);
+#else
+int main() {
+	return 0;
+}
+#endif
