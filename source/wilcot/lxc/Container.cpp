@@ -225,7 +225,9 @@ void Container::setupNamespaceHandles_() {
 		sprintf(path, NAMESPACE_FILES__[i], handle_);
 		namespaceHandles_[i] = open(path, O_RDONLY);
 		if (namespaceHandles_[i] == -1) {
-			throw std::runtime_error("Unable to open namespace descriptor");
+			throw std::runtime_error(
+				"Unable to open namespace descriptor"
+			);
 		}
 	}
 }
@@ -263,11 +265,11 @@ void Container::setupMountNamespace_() {
 	for (it = bindMounts_.begin(); it != bindMounts_.end(); it++) {
 		os::Path source = it->first.first;
 		os::Path target = newRoot + it->first.second;
-		if (wilcot::os::isFile(source)) {
-			wilcot::os::createDirectories(target.getParent());
-			wilcot::os::createFile(target);
-		} else if (wilcot::os::isDirectory(source)) {
-			wilcot::os::createDirectories(target);
+		if (os::isFile(source)) {
+			os::createDirectories(target.getParent());
+			os::createFile(target);
+		} else if (os::isDirectory(source)) {
+			os::createDirectories(target);
 		}
 		long flags = MS_BIND | MS_PRIVATE;
 		if (it->second) {
@@ -284,8 +286,33 @@ void Container::setupMountNamespace_() {
 		throw std::runtime_error("Failed to unmount old root");
 	}
 	os::removeDirectory(oldRoot);
+	os::Path lxcPath("/.lxc");
+	os::createDirectory(lxcPath);
+	// Prepare 'proc' filesystem
+	os::Path procPath(lxcPath / "proc");
+	os::createDirectory(procPath);
+	if (mount(
+		procPath, procPath, "proc",
+		MS_BIND | MS_PRIVATE, NULL) == -1) {
+		throw std::runtime_error(
+			"Failed to mount 'proc' filesystem"
+		);
+	}
+	// Prepare 'cgroup' filesystem
+	os::Path cgroupPath(lxcPath / "cgroup");
+	os::createDirectory(cgroupPath);
+	if (mount(
+		cgroupPath, cgroupPath, "cgroup",
+		MS_BIND | MS_PRIVATE, NULL) == -1) {
+		throw std::runtime_error(
+			"Failed to mount 'cgroup' filesystem"
+		);
+	}
+	// Change working directory
 	if (chdir(workingDirectory_) != 0) {
-		throw std::runtime_error("Failed to change working directory");
+		throw std::runtime_error(
+			"Failed to change working directory"
+		);
 	}
 }
 
@@ -295,6 +322,9 @@ void Container::setupUtsNamespace_() {
 	std::string hostname = getRandomString__(16);
 	if (sethostname(hostname.c_str(), hostname.size()) != 0) {
 		throw std::runtime_error("Unable to set hostname");
+	}
+	if (setdomainname(hostname.c_str(), hostname.size()) != 0) {
+		throw std::runtime_error("Unable to set domainname");
 	}
 }
 
