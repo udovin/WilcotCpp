@@ -255,8 +255,7 @@ void Container::setupMountNamespace_() {
 		throw std::runtime_error("Failed to remount root as private");
 	}
 	os::Path newRoot = path_ / "rootfs";
-	os::Path oldRoot = "/.oldroot";
-	os::createDirectories(newRoot + oldRoot);
+	os::createDirectories(newRoot);
 	if (mount(newRoot, newRoot, NULL, MS_BIND | MS_PRIVATE, NULL) == -1) {
 		throw std::runtime_error("Failed to remount new root");
 	}
@@ -279,21 +278,19 @@ void Container::setupMountNamespace_() {
 			throw std::runtime_error("Unable to create bind mount");
 		}
 	}
-	if (pivotRoot__(newRoot, newRoot + oldRoot) != 0) {
-		throw std::runtime_error("Failed to pivot root");
-	}
-	if (umount2(oldRoot, MNT_DETACH)) {
-		throw std::runtime_error("Failed to unmount old root");
-	}
-	os::removeDirectory(oldRoot);
-	os::Path lxcPath("/.lxc");
+	os::Path lxcPath(newRoot / ".lxc");
 	os::createDirectory(lxcPath);
+	if (mount(
+		NULL, lxcPath, "tmpfs", 0, NULL) == -1) {
+		throw std::runtime_error(
+			"Failed to mount 'lxc' root directory"
+		);
+	}
 	// Prepare 'proc' filesystem
 	os::Path procPath(lxcPath / "proc");
 	os::createDirectory(procPath);
 	if (mount(
-		procPath, procPath, "proc",
-		MS_BIND | MS_PRIVATE, NULL) == -1) {
+		NULL, procPath, "proc", 0, NULL) == -1) {
 		throw std::runtime_error(
 			"Failed to mount 'proc' filesystem"
 		);
@@ -302,12 +299,37 @@ void Container::setupMountNamespace_() {
 	os::Path cgroupPath(lxcPath / "cgroup");
 	os::createDirectory(cgroupPath);
 	if (mount(
-		cgroupPath, cgroupPath, "cgroup",
-		MS_BIND | MS_PRIVATE, NULL) == -1) {
+		NULL, cgroupPath, "tmpfs", 0, NULL) == -1) {
 		throw std::runtime_error(
-			"Failed to mount 'cgroup' filesystem"
+			"Failed to mount 'cgroup' root directory"
 		);
 	}
+	os::Path cgroupCpusetPath(cgroupPath / "cpuset");
+	os::createDirectory(cgroupCpusetPath);
+	if (mount(
+		NULL, cgroupCpusetPath, "cgroup", 0, "cpuset") == -1) {
+		throw std::runtime_error(
+			"Failed to mount 'cgroup:cpuset' filesystem"
+		);
+	}
+	os::Path cgroupMemoryPath(cgroupPath / "memory");
+	os::createDirectory(cgroupMemoryPath);
+	if (mount(
+		NULL, cgroupMemoryPath, "cgroup", 0, "memory") == -1) {
+		throw std::runtime_error(
+			"Failed to mount 'cgroup:memory' filesystem"
+		);
+	}
+	// Change root directory
+	os::Path oldRoot = "/.oldroot";
+	os::createDirectory(newRoot + oldRoot);
+	if (pivotRoot__(newRoot, newRoot + oldRoot) != 0) {
+		throw std::runtime_error("Failed to pivot root");
+	}
+	if (umount2(oldRoot, MNT_DETACH)) {
+		throw std::runtime_error("Failed to unmount old root");
+	}
+	os::removeDirectory(oldRoot);
 	// Change working directory
 	if (chdir(workingDirectory_) != 0) {
 		throw std::runtime_error(
