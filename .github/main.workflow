@@ -4,7 +4,7 @@ workflow "Build project" {
 }
 
 action "Run build" {
-  uses = "actions/bin/filter@46ffca7632504e61db2d4cb16be1e80f333cb859"
+  uses = "actions/action-builder/shell@master"
   runs = "make"
   args = "build"
 }
