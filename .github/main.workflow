@@ -1,4 +1,4 @@
-workflow "Build project" {
+workflow "Build Repository" {
   on = "push"
   resolves = ["Run build"]
 }
