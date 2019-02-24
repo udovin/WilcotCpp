@@ -6,6 +6,9 @@
 #ifndef HEADER_wilcot_lxc_Container
 #define HEADER_wilcot_lxc_Container
 
+#include <wilcot/base.h>
+
+#ifdef WILCOT_OS_LINUX
 #include <wilcot/os/Path.h>
 #include <wilcot/os/IFileHandle.h>
 #include <string>
@@ -98,6 +101,15 @@ public:
 	Container& setWorkingDirectory(const os::Path& directory);
 
 	/**
+	 * Get exit code
+	 *
+	 * @return
+	 *
+	 * @since 0.0.1
+	 */
+	int getExitCode() const;
+
+	/**
 	 * Set standard input
 	 *
 	 * @param inputHandle
@@ -139,15 +151,6 @@ public:
 	Container& addBindMount(
 		const os::Path& source, const os::Path& target,
 		bool readOnly = false);
-
-	/**
-	 * Get exit code
-	 *
-	 * @return
-	 *
-	 * @since 0.0.1
-	 */
-	int getExitCode() const;
 
 	/**
 	 * Start container
@@ -199,6 +202,11 @@ private:
 	/**
 	 * @since 0.0.1
 	 */
+	int exitCode_;
+
+	/**
+	 * @since 0.0.1
+	 */
 	int standardInputHandle_;
 
 	/**
@@ -219,17 +227,12 @@ private:
 	/**
 	 * @since 0.0.1
 	 */
-	int exitCode_;
-
-	/**
-	 * @since 0.0.1
-	 */
 	int pipe_[2];
 
 	/**
 	 * @since 0.0.1
 	 */
-	int namespaceHandles_[5];
+	std::vector<int> namespaceHandles_;
 
 	/**
 	 * An entry point for child process
@@ -265,6 +268,13 @@ private:
 	void setupNamespaceHandles_();
 
 	/**
+	 * Clean descriptors for namespaces
+	 *
+	 * @since 0.0.1
+	 */
+	void cleanNamespaceHandles_();
+
+	/**
 	 * Setup user namespace
 	 *
 	 * @since 0.0.1
@@ -298,8 +308,16 @@ private:
 	 * @since 0.0.1
 	 */
 	void setupIpcNamespace_();
+
+	/**
+	 * Setup cgroup namespace
+	 *
+	 * @since 0.1.0
+	 */
+	void setupCgroupNamespace_();
 };
 
 }}
+#endif
 
 #endif // HEADER_wilcot_lxc_Container

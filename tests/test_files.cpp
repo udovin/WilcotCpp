@@ -9,7 +9,7 @@
 #include <algorithm>
 
 class FileTestCase : public wilcot::tests::TestCase {
-public:
+protected:
 	wilcot::os::Path tempPath;
 
 	void tearDown() {
@@ -54,7 +54,8 @@ public:
 		}
 	}
 
-	FileTestCase() : tempPath("/tmp/wilcotcpp-test") {
+public:
+	FileTestCase() : tempPath("/tmp/wilcotcpp-test-files") {
 		ADD_TEST(FileTestCase, testCreateFile);
 		ADD_TEST(FileTestCase, testCreateDirectory);
 		ADD_TEST(FileTestCase, testListDirectory);

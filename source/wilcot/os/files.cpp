@@ -57,7 +57,11 @@ std::vector<Path> listDirectory(const Path& path) {
 }
 
 void createFile(const Path& path) {
-	int fd = open(path, O_RDWR | O_CREAT, S_IRUSR | S_IRGRP | S_IROTH);
+	int fd = open(
+		path,
+		O_RDWR | O_CREAT,
+		S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH
+	);
 	if (fd == -1) {
 		throw std::runtime_error("Unable to create file");
 	}

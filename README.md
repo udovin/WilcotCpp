@@ -19,11 +19,11 @@ Wilcot Cpp — a C++ library that helps in developing Linux applications.
 // Create new option parser
 wilcot::cli::OptionParser parser;
 // Create arguments for options
-wilcot::cli::ValueOption<std::string> inputFile("--input");
-wilcot::cli::ValueOption<std::string> outputFile("--output");
+wilcot::cli::ValueOption<std::string> inputFile("--input", "path");
+wilcot::cli::ValueOption<std::string> outputFile("--output", "path");
 // Add options to option parser
-parser.addOption(inputFile.setArgument("path"));
-parser.addOption(outputFile.setArgument("path"));
+parser.addOption(inputFile);
+parser.addOption(outputFile);
 // Parse arguments passed to main
 parser.parse(argc, argv);
 ```

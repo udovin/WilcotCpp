@@ -3,19 +3,20 @@
  * @license MIT
  */
 
+#include <wilcot/base.h>
+
+#ifdef WILCOT_OS_LINUX
 #include <wilcot/lxc/Container.h>
 #include <wilcot/os/files.h>
 #include <wilcot/io/FileStream.h>
-#ifdef WILCOT_OS_LINUX
-#	include <unistd.h>
-#	include <signal.h>
-#	include <fcntl.h>
-#	include <sys/wait.h>
-#	include <sys/mount.h>
-#	include <sys/stat.h>
-#	include <sys/syscall.h>
-#	include <cstring>
-#endif
+#include <unistd.h>
+#include <signal.h>
+#include <fcntl.h>
+#include <sys/wait.h>
+#include <sys/mount.h>
+#include <sys/stat.h>
+#include <sys/syscall.h>
+#include <cstring>
 #include <stdexcept>
 #include <sstream>
 #include <cstdlib>
@@ -25,14 +26,13 @@
 
 namespace wilcot { namespace lxc {
 
-#ifdef WILCOT_OS_LINUX
-static const std::size_t STACK_SIZE_ = 1048576;
+static const size_t STACK_SIZE_ = 1048576;
 
-static std::string getRandomString__(std::size_t length) {
+static std::string getRandomString__(size_t length) {
 	std::stringstream ss;
 
 	srand(static_cast<unsigned int>(time(NULL)));
-	for (std::size_t i = 0; i < length; i++) {
+	for (size_t i = 0; i < length; i++) {
 		ss << "0123456789abcdef"[rand() % 16];
 	}
 
@@ -43,15 +43,25 @@ long pivotRoot__(const char* oldRoot, const char* newRoot) {
 	return syscall(SYS_pivot_root, oldRoot, newRoot);
 }
 
-#endif
+static const size_t NAMESPACE_FILES_SIZE__ = 6;
+
+static const char* NAMESPACE_FILES__[NAMESPACE_FILES_SIZE__] = {
+	"/proc/%d/ns/user",
+	"/proc/%d/ns/mnt",
+	"/proc/%d/ns/net",
+	"/proc/%d/ns/uts",
+	"/proc/%d/ns/ipc",
+	"/proc/%d/ns/cgroup",
+};
 
 Container::Container(const os::Path& path)
 	: path_(path), handle_(-1), program_(), arguments_()
-	, workingDirectory_("/")
+	, workingDirectory_("/"), exitCode_()
 	, standardInputHandle_(STDIN_FILENO)
 	, standardOutputHandle_(STDOUT_FILENO)
 	, standardErrorHandle_(STDERR_FILENO)
-	, bindMounts_(), exitCode_(0) {}
+	, bindMounts_(), pipe_()
+	, namespaceHandles_(NAMESPACE_FILES_SIZE__, -1) {}
 
 Container::~Container() {
 	stop();
@@ -86,6 +96,10 @@ Container& Container::setWorkingDirectory(const os::Path& directory) {
 	return *this;
 }
 
+int Container::getExitCode() const {
+	return exitCode_;
+}
+
 Container& Container::setStandardInput(os::IFileHandle& inputHandle) {
 	standardInputHandle_ = inputHandle.getHandle();
 	return *this;
@@ -108,12 +122,7 @@ Container& Container::addBindMount(
 	return *this;
 }
 
-int Container::getExitCode() const {
-	return exitCode_;
-}
-
 Container& Container::start() {
-#ifdef WILCOT_OS_LINUX
 	if (pipe(pipe_) == -1) {
 		throw std::runtime_error("Unable to create pipe.");
 	}
@@ -124,38 +133,31 @@ Container& Container::start() {
 		Container::entryPoint_,
 		static_cast<void *>(stack + STACK_SIZE_),
 		CLONE_NEWUSER | CLONE_NEWNS | CLONE_NEWNET | CLONE_NEWUTS
-			| CLONE_NEWIPC | CLONE_NEWPID | SIGCHLD,
+			| CLONE_NEWIPC | CLONE_NEWPID | CLONE_NEWCGROUP | SIGCHLD,
 		static_cast<void *>(this));
 	delete[] stack;
 	close(pipe_[0]);
-#endif
 	// Failed to clone current container.
 	if (handle_ == -1) {
-#ifdef WILCOT_OS_LINUX
 		close(pipe_[1]);
-#endif
 		throw std::runtime_error("Unable to start container.");
 	}
-#ifdef WILCOT_OS_LINUX
 	prepareUserNamespace_();
 	setupNamespaceHandles_();
-#endif
 	return *this;
 }
 
 Container& Container::stop() {
-#ifdef WILCOT_OS_LINUX
 	kill(handle_, SIGKILL);
-#endif
+	cleanNamespaceHandles_();
+	handle_ = -1;
 	return *this;
 }
 
 Container& Container::wait() {
-#ifdef WILCOT_OS_LINUX
 	int status;
 	waitpid(handle_, &status, 0);
 	exitCode_ = WEXITSTATUS(status);
-#endif
 	return *this;
 }
 
@@ -164,9 +166,7 @@ int Container::entryPoint_(void* container) {
 }
 
 int Container::entryPoint_() {
-#ifdef WILCOT_OS_LINUX
 	close(pipe_[1]);
-#endif
 	try {
 		setupUserNamespace_();
 		// Now we should initialize mount namespace.
@@ -174,6 +174,7 @@ int Container::entryPoint_() {
 		setupNetworkNamespace_();
 		setupUtsNamespace_();
 		setupIpcNamespace_();
+		setupCgroupNamespace_();
 		dup2(standardInputHandle_, STDIN_FILENO);
 		dup2(standardOutputHandle_, STDOUT_FILENO);
 		dup2(standardErrorHandle_, STDERR_FILENO);
@@ -192,7 +193,6 @@ int Container::entryPoint_() {
 }
 
 void Container::prepareUserNamespace_() {
-#ifdef WILCOT_OS_LINUX
 	int fd;
 	char path[40], data[256];
 	// Our process user has overflow UID and the same GID.
@@ -217,48 +217,45 @@ void Container::prepareUserNamespace_() {
 	close(fd);
 	// Now we should unlock child process.
 	close(pipe_[1]);
-#endif
 }
 
-#ifdef WILCOT_OS_LINUX
-static const char* NAMESPACE_FILES__[5] = {
-	"/proc/%d/ns/user",
-	"/proc/%d/ns/mnt",
-	"/proc/%d/ns/net",
-	"/proc/%d/ns/utc",
-	"/proc/%d/ns/ipc"
-};
-#endif
-
 void Container::setupNamespaceHandles_() {
-#ifdef WILCOT_OS_LINUX
 	char path[40];
-	for (int i = 0; i < 5; i++) {
+	for (size_t i = 0; i < NAMESPACE_FILES_SIZE__; i++) {
 		sprintf(path, NAMESPACE_FILES__[i], handle_);
 		namespaceHandles_[i] = open(path, O_RDONLY);
+		if (namespaceHandles_[i] == -1) {
+			throw std::runtime_error(
+				"Unable to open namespace descriptor"
+			);
+		}
 	}
-#endif
+}
+
+void Container::cleanNamespaceHandles_() {
+	for (size_t i = 0; i < NAMESPACE_FILES_SIZE__; i++) {
+		if (namespaceHandles_[i] != -1) {
+			::close(namespaceHandles_[i]);
+			namespaceHandles_[i] = -1;
+		}
+	}
 }
 
 void Container::setupUserNamespace_() {
-#ifdef WILCOT_OS_LINUX
 	char c;
 	// We should wait for setup of user namespace from parent.
 	if (read(pipe_[0], &c, 1) != 0) {
 		throw std::runtime_error("Failed to wait pipe close");
 	}
-#endif
 }
 
 void Container::setupMountNamespace_() {
-#ifdef WILCOT_OS_LINUX
 	// First of all make all changes are private for current root.
 	if (mount("/", "/", NULL, MS_REC | MS_PRIVATE, NULL) == -1) {
 		throw std::runtime_error("Failed to remount root as private");
 	}
 	os::Path newRoot = path_ / "rootfs";
-	os::Path oldRoot = "/.oldroot";
-	os::createDirectories(newRoot + oldRoot);
+	os::createDirectories(newRoot);
 	if (mount(newRoot, newRoot, NULL, MS_BIND | MS_PRIVATE, NULL) == -1) {
 		throw std::runtime_error("Failed to remount new root");
 	}
@@ -267,11 +264,11 @@ void Container::setupMountNamespace_() {
 	for (it = bindMounts_.begin(); it != bindMounts_.end(); it++) {
 		os::Path source = it->first.first;
 		os::Path target = newRoot + it->first.second;
-		if (wilcot::os::isFile(source)) {
-			wilcot::os::createDirectories(target.getParent());
-			wilcot::os::createFile(target);
-		} else if (wilcot::os::isDirectory(source)) {
-			wilcot::os::createDirectories(target);
+		if (os::isFile(source)) {
+			os::createDirectories(target.getParent());
+			os::createFile(target);
+		} else if (os::isDirectory(source)) {
+			os::createDirectories(target);
 		}
 		long flags = MS_BIND | MS_PRIVATE;
 		if (it->second) {
@@ -281,6 +278,51 @@ void Container::setupMountNamespace_() {
 			throw std::runtime_error("Unable to create bind mount");
 		}
 	}
+	os::Path lxcPath(newRoot / ".lxc");
+	os::createDirectory(lxcPath);
+	if (mount(
+		NULL, lxcPath, "tmpfs", 0, NULL) == -1) {
+		throw std::runtime_error(
+			"Failed to mount 'lxc' root directory"
+		);
+	}
+	// Prepare 'proc' filesystem
+	os::Path procPath(lxcPath / "proc");
+	os::createDirectory(procPath);
+	if (mount(
+		NULL, procPath, "proc", 0, NULL) == -1) {
+		throw std::runtime_error(
+			"Failed to mount 'proc' filesystem"
+		);
+	}
+	// Prepare 'cgroup' filesystem
+	os::Path cgroupPath(lxcPath / "cgroup");
+	os::createDirectory(cgroupPath);
+	if (mount(
+		NULL, cgroupPath, "tmpfs", 0, NULL) == -1) {
+		throw std::runtime_error(
+			"Failed to mount 'cgroup' root directory"
+		);
+	}
+	os::Path cgroupCpusetPath(cgroupPath / "cpuset");
+	os::createDirectory(cgroupCpusetPath);
+	if (mount(
+		NULL, cgroupCpusetPath, "cgroup", 0, "cpuset") == -1) {
+		throw std::runtime_error(
+			"Failed to mount 'cgroup:cpuset' filesystem"
+		);
+	}
+	os::Path cgroupMemoryPath(cgroupPath / "memory");
+	os::createDirectory(cgroupMemoryPath);
+	if (mount(
+		NULL, cgroupMemoryPath, "cgroup", 0, "memory") == -1) {
+		throw std::runtime_error(
+			"Failed to mount 'cgroup:memory' filesystem"
+		);
+	}
+	// Change root directory
+	os::Path oldRoot = "/.oldroot";
+	os::createDirectory(newRoot + oldRoot);
 	if (pivotRoot__(newRoot, newRoot + oldRoot) != 0) {
 		throw std::runtime_error("Failed to pivot root");
 	}
@@ -288,23 +330,29 @@ void Container::setupMountNamespace_() {
 		throw std::runtime_error("Failed to unmount old root");
 	}
 	os::removeDirectory(oldRoot);
+	// Change working directory
 	if (chdir(workingDirectory_) != 0) {
-		throw std::runtime_error("Failed to change working directory");
+		throw std::runtime_error(
+			"Failed to change working directory"
+		);
 	}
-#endif
 }
 
 void Container::setupNetworkNamespace_() {}
 
 void Container::setupUtsNamespace_() {
-#ifdef WILCOT_OS_LINUX
 	std::string hostname = getRandomString__(16);
 	if (sethostname(hostname.c_str(), hostname.size()) != 0) {
 		throw std::runtime_error("Unable to set hostname");
 	}
-#endif
+	if (setdomainname(hostname.c_str(), hostname.size()) != 0) {
+		throw std::runtime_error("Unable to set domainname");
+	}
 }
 
 void Container::setupIpcNamespace_() {}
 
+void Container::setupCgroupNamespace_() {}
+
 }}
+#endif

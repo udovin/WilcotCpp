@@ -91,6 +91,15 @@ public:
 	Process& setWorkingDirectory(const Path& directory);
 
 	/**
+	 * Get exit code
+	 *
+	 * @return
+	 *
+	 * @since 0.0.1
+	 */
+	int getExitCode() const;
+
+	/**
 	 * Set standard input
 	 *
 	 * @param inputHandle
@@ -119,15 +128,6 @@ public:
 	 * @since 0.0.1
 	 */
 	Process& setStandardError(IFileHandle& outputHandle);
-
-	/**
-	 * Get exit code
-	 *
-	 * @return
-	 *
-	 * @since 0.0.1
-	 */
-	int getExitCode() const;
 
 	/**
 	 * Start process
@@ -180,6 +180,11 @@ private:
 	/**
 	 * @since 0.0.1
 	 */
+	int exitCode_;
+
+	/**
+	 * @since 0.0.1
+	 */
 	int standardInputHandle_;
 
 	/**
@@ -191,11 +196,6 @@ private:
 	 * @since 0.0.1
 	 */
 	int standardErrorHandle_;
-
-	/**
-	 * @since 0.0.1
-	 */
-	int exitCode_;
 
 	/**
 	 * An entry point for child process

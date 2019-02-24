@@ -1,5 +1,8 @@
 *.o
 *.a
 .build/
-.vscode/
 library/
+
+# Ignore IDE settings
+.vscode/
+.idea/
